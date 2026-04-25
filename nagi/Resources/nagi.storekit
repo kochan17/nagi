@@ -1,0 +1,124 @@
+{
+  "identifier" : "7D3A1F29-4E8B-4C12-9A6D-2B5E8F1C3D7A",
+  "nonConsumableProducts" : [
+
+  ],
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "ja_JP",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Fetch Offers"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "C2A1F5E8-3B7D-4A9C-8E6F-1D2C5B4A3E7F",
+      "localizations" : [
+
+      ],
+      "name" : "nagi Premium",
+      "products" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "7000",
+          "familyShareable" : false,
+          "groupLevel" : 1,
+          "internalID" : "A9E3F1C7-2B4D-4E8A-9C6F-3D1B5E7A2C4F",
+          "introductoryOffer" : {
+            "duration" : 3,
+            "durationUnit" : "DAY",
+            "offerIdentifier" : "trial",
+            "offerMode" : "FREE_TRIAL",
+            "price" : "0"
+          },
+          "localizations" : [
+            {
+              "description" : "Unlock unlimited relaxation content with annual subscription",
+              "displayName" : "Annual Premium",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "年間サブスクリプションで無制限のリラクゼーションコンテンツを解放",
+              "displayName" : "年間プレミアム",
+              "locale" : "ja_JP"
+            }
+          ],
+          "productID" : "com.kochan17.nagi.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Annual Premium",
+          "subscriptionGroupID" : "C2A1F5E8-3B7D-4A9C-8E6F-1D2C5B4A3E7F",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "2000",
+          "familyShareable" : false,
+          "groupLevel" : 2,
+          "internalID" : "B4D7E2A9-5C1F-4B8E-7A3D-6E9C2F4B1A5D",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlock unlimited relaxation content with monthly subscription",
+              "displayName" : "Monthly Premium",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "月間サブスクリプションで無制限のリラクゼーションコンテンツを解放",
+              "displayName" : "月間プレミアム",
+              "locale" : "ja_JP"
+            }
+          ],
+          "productID" : "com.kochan17.nagi.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Monthly Premium",
+          "subscriptionGroupID" : "C2A1F5E8-3B7D-4A9C-8E6F-1D2C5B4A3E7F",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

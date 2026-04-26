@@ -1,0 +1,46 @@
+{
+  "skill_name": "pbxproj-register",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Waves シーンの土台ファイルを `nagi/Scenes/Waves/WavesScene.swift` に作りたい。中身は最小限（`import SwiftUI` と空の `struct WavesScene { }` だけで OK）。作成したらこの新規ファイルが Xcode のビルドターゲットに確実に入るように、`nagi.xcodeproj/project.pbxproj` に必要な登録を行ってください。silent orphan にしないこと。",
+      "expected_output": "nagi/Scenes/Waves/WavesScene.swift が作成され、project.pbxproj に PBXBuildFile + PBXFileReference + PBXSourcesBuildPhase 3 箇所のエントリが追加されている",
+      "files": [],
+      "expectations": [
+        "ファイル `nagi/Scenes/Waves/WavesScene.swift` がディスクに存在する",
+        "project.pbxproj 内に `path = nagi/Scenes/Waves/WavesScene.swift;` を含む PBXFileReference 行がある",
+        "project.pbxproj 内に `WavesScene.swift in Sources` を含む PBXBuildFile 行がある",
+        "PBXFileReference の lastKnownFileType が sourcecode.swift である",
+        "新規追加された A ID（A1000NNN 形式）が PBXSourcesBuildPhase F1000002 の files リストに含まれる",
+        "skill のバンドルスクリプト（`.claude/skills/pbxproj-register/scripts/register_one.py` または既存の `scripts/add_to_pbxproj_text.py`）が呼び出されている",
+        "project.pbxproj が破壊されていない（grep で他の既存エントリ件数が変化していない、Begin/End マーカーが対で残っている）"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Waves シーン用の Metal シェーダーを `nagi/Shaders/WavesShader.metal` として作成してください。中身は最小限の `#include <metal_stdlib>` と空の kernel 関数 1 つで十分。作成後、このシェーダーが Xcode のビルドに入って .metallib に取り込まれるよう、pbxproj への登録を行ってください。",
+      "expected_output": "nagi/Shaders/WavesShader.metal が作成され、project.pbxproj に sourcecode.metal 型の 3 箇所エントリが追加されている",
+      "files": [],
+      "expectations": [
+        "ファイル `nagi/Shaders/WavesShader.metal` がディスクに存在する",
+        "project.pbxproj 内に `path = nagi/Shaders/WavesShader.metal;` を含む PBXFileReference 行がある",
+        "PBXFileReference の lastKnownFileType が **sourcecode.metal** である（sourcecode.swift ではなく）",
+        "project.pbxproj 内に `WavesShader.metal in Sources` を含む PBXBuildFile 行がある",
+        "新規追加された A ID が PBXSourcesBuildPhase F1000002 の files リストに含まれる",
+        "skill のバンドルスクリプト（または既存の text ベース script）が呼び出されている"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "`nagi/Scenes/Bonfire/BonfireScene.swift` を Xcode のビルドターゲットに登録してください。",
+      "expected_output": "BonfireScene.swift は既に pbxproj に登録済みなので、skill が冪等に skip し、project.pbxproj に重複エントリが追加されない",
+      "files": [],
+      "expectations": [
+        "実行後、project.pbxproj 内の `BonfireScene.swift` を含む PBXFileReference 行は **1 行のみ**（重複していない）",
+        "実行後、project.pbxproj 内の `BonfireScene.swift in Sources` を含む PBXBuildFile 行は **1 行のみ**",
+        "skill またはエージェントが「すでに登録済み」「already registered」「skip」のような冪等性を示すメッセージを出力している",
+        "破壊的な変更（重複追加・既存エントリの上書き）が起きていない"
+      ]
+    }
+  ]
+}

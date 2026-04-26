@@ -211,6 +211,7 @@ enum TextureType: String, CaseIterable, Identifiable {
     case waves
     case fractal
     case campfire
+    case forest
 
     var id: String { rawValue }
 
@@ -225,6 +226,7 @@ enum TextureType: String, CaseIterable, Identifiable {
         case .waves: return "waves_render"
         case .fractal: return "fractal_render"
         case .campfire: return "campfire_render"
+        case .forest: return "forest_render"
         }
     }
 
@@ -247,6 +249,7 @@ enum TextureType: String, CaseIterable, Identifiable {
         case .waves: return .forBetterSleeping
         case .fractal: return .categoryFractal
         case .campfire: return .categoryCampfire
+        case .forest: return .categoryForest
         }
     }
 
@@ -260,6 +263,7 @@ enum TextureType: String, CaseIterable, Identifiable {
         case .waves: return "water.waves"
         case .fractal: return "atom"
         case .campfire: return "flame.fill"
+        case .forest: return "leaf.fill"
         }
     }
 
@@ -269,6 +273,7 @@ enum TextureType: String, CaseIterable, Identifiable {
         switch self {
         case .slime: return "slime_velvet"
         case .campfire: return nil
+        case .forest: return nil
         default: return nil
         }
     }
@@ -283,6 +288,7 @@ enum TextureType: String, CaseIterable, Identifiable {
         case .waves: return "waves_ocean"
         case .fractal: return "kaleidoscope_chime"
         case .campfire: return "campfire_ambient"
+        case .forest: return "forest_ambient"
         }
     }
 
@@ -296,6 +302,7 @@ enum TextureType: String, CaseIterable, Identifiable {
         case .waves: return [.blue.opacity(0.6), .teal.opacity(0.4)]
         case .fractal: return [.red.opacity(0.6), .purple.opacity(0.4)]
         case .campfire: return [.black, Color(red: 0.6, green: 0.2, blue: 0.0).opacity(0.9), Color(red: 0.35, green: 0.04, blue: 0.0).opacity(0.8)]
+        case .forest: return [Color(red: 0.02, green: 0.12, blue: 0.02).opacity(0.95), Color(red: 0.08, green: 0.22, blue: 0.04).opacity(0.85), Color(red: 0.18, green: 0.14, blue: 0.03).opacity(0.8)]
         }
     }
 

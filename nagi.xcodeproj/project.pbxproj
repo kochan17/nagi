@@ -65,6 +65,8 @@
 		'A1000101' /* SceneDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000101' /* SceneDebugView.swift */; };
 		'A1000102' /* ABComparisonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000102' /* ABComparisonView.swift */; };
 		'A1000103' /* StudioTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000103' /* StudioTab.swift */; };
+		'A1000104' /* ForestScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000104' /* ForestScene.swift */; };
+		'A1000105' /* ForestShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000105' /* ForestShader.metal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -127,6 +129,8 @@
 		'B1000101' /* SceneDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDebugView.swift; sourceTree = "<group>"; };
 		'B1000102' /* ABComparisonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABComparisonView.swift; sourceTree = "<group>"; };
 		'B1000103' /* StudioTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioTab.swift; sourceTree = "<group>"; };
+		'B1000104' /* ForestScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForestScene.swift; sourceTree = "<group>"; };
+		'B1000105' /* ForestShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ForestShader.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -327,6 +331,7 @@
 				B1000044,
 				B1000048,
 				'B1000097' /* CampfireShader.metal */,
+				'B1000105' /* ForestShader.metal */,
 			);
 			path = Shaders;
 			sourceTree = "<group>";
@@ -357,6 +362,7 @@
 			isa = PBXGroup;
 			children = (
 				'E1000032' /* Bonfire */,
+				'E1000100' /* Forest */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -379,6 +385,14 @@
 				'B1000098' /* BonfireScene.swift */,
 			);
 			path = Bonfire;
+			sourceTree = "<group>";
+		};
+		'E1000100' = {
+			isa = PBXGroup;
+			children = (
+				'B1000104' /* ForestScene.swift */,
+			);
+			path = Forest;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -510,6 +524,8 @@
 				A1000101,
 				A1000102,
 				A1000103,
+				A1000104,
+				A1000105,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -173,6 +173,7 @@ enum L10nKey: String {
     case categoryOrbs
     case categoryFractal
     case categoryCampfire
+    case categoryForest
 
     // TextureVariant names
     case variantFluidsMagenta
@@ -392,6 +393,7 @@ private let enTranslations: [L10nKey: String] = [
     .categoryOrbs: "Orbs",
     .categoryFractal: "Fractal",
     .categoryCampfire: "Campfire",
+    .categoryForest: "Forest",
     .variantFluidsMagenta: "Magenta",
     .variantFluidsCyanMist: "Cyan Mist",
     .variantFluidsSunsetGold: "Sunset Gold",
@@ -590,6 +592,7 @@ private let jaTranslations: [L10nKey: String] = [
     .categoryOrbs: "オーブ",
     .categoryFractal: "フラクタル",
     .categoryCampfire: "焚き火",
+    .categoryForest: "森",
     .variantFluidsMagenta: "マゼンタ",
     .variantFluidsCyanMist: "シアンミスト",
     .variantFluidsSunsetGold: "サンセットゴールド",
@@ -788,6 +791,7 @@ private let koTranslations: [L10nKey: String] = [
     .categoryOrbs: "오브",
     .categoryFractal: "프랙탈",
     .categoryCampfire: "모닥불",
+    .categoryForest: "숲",
     .variantFluidsMagenta: "마젠타",
     .variantFluidsCyanMist: "시안 미스트",
     .variantFluidsSunsetGold: "선셋 골드",
@@ -986,6 +990,7 @@ private let zhTranslations: [L10nKey: String] = [
     .categoryOrbs: "光球",
     .categoryFractal: "分形",
     .categoryCampfire: "篝火",
+    .categoryForest: "森林",
     .variantFluidsMagenta: "品红",
     .variantFluidsCyanMist: "青色薄雾",
     .variantFluidsSunsetGold: "夕阳金",

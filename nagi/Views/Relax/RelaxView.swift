@@ -54,9 +54,12 @@ struct RelaxView: View {
 
     @ViewBuilder
     private func destinationView(for category: TextureType) -> some View {
-        if category == .campfire {
+        switch category {
+        case .campfire:
             SceneStage(scene: BonfireScene())
-        } else {
+        case .forest:
+            SceneStage(scene: ForestScene())
+        default:
             CategoryDetailView(category: category)
         }
     }

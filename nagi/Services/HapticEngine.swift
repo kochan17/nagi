@@ -34,6 +34,8 @@ struct HapticProfile {
             return HapticProfile(baseIntensity: 0.55, baseSharpness: 0.6, releaseStyle: .ripple)
         case .campfire:
             return HapticProfile(baseIntensity: 0.5, baseSharpness: 0.7, releaseStyle: .snap)
+        case .forest:
+            return HapticProfile(baseIntensity: 0.45, baseSharpness: 0.4, releaseStyle: .ripple)
         }
     }
 }
@@ -345,6 +347,91 @@ final class HapticEngine {
             relativeTime: 0
         )
         return try CHHapticPattern(events: [event], parameterCurves: [intensityCurve])
+    }
+
+    // MARK: - Forest pattern factories
+
+    /// Leaf step: a dry, crisp transient like pressing down on a dry autumn leaf — two quick
+    /// micro-taps to suggest the crunch-and-crackle texture of the leaf bed underfoot.
+    static func makeForestLeafStepPattern() throws -> CHHapticPattern {
+        let events: [CHHapticEvent] = [
+            CHHapticEvent(
+                eventType: .hapticTransient,
+                parameters: [
+                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.65),
+                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.75)
+                ],
+                relativeTime: 0
+            ),
+            CHHapticEvent(
+                eventType: .hapticTransient,
+                parameters: [
+                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.35),
+                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.55)
+                ],
+                relativeTime: 0.055
+            )
+        ]
+        return try CHHapticPattern(events: events, parameters: [])
+    }
+
+    /// Rustle gust: a continuous soft rumble that fades — the sound of leaves stirring
+    /// when fingers lift and the canopy settles back.
+    static func makeForestRustleGustPattern(duration: TimeInterval = 0.5) throws -> CHHapticPattern {
+        let event = CHHapticEvent(
+            eventType: .hapticContinuous,
+            parameters: [
+                CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.30),
+                CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.25),
+                CHHapticEventParameter(parameterID: .attackTime, value: 0.02),
+                CHHapticEventParameter(parameterID: .decayTime, value: Float(duration * 0.75)),
+                CHHapticEventParameter(parameterID: .sustained, value: 0)
+            ],
+            relativeTime: 0,
+            duration: duration
+        )
+        let intensityCurve = CHHapticParameterCurve(
+            parameterID: .hapticIntensityControl,
+            controlPoints: [
+                CHHapticParameterCurve.ControlPoint(relativeTime: 0, value: 0.30),
+                CHHapticParameterCurve.ControlPoint(relativeTime: duration * 0.4, value: 0.20),
+                CHHapticParameterCurve.ControlPoint(relativeTime: duration, value: 0.05)
+            ],
+            relativeTime: 0
+        )
+        return try CHHapticPattern(events: [event], parameterCurves: [intensityCurve])
+    }
+
+    /// Deep groan: low-frequency transient for a held press — an ancient tree flexing
+    /// in the wind, heavy and resonant.
+    static func makeForestDeepGroanPattern() throws -> CHHapticPattern {
+        let events: [CHHapticEvent] = [
+            CHHapticEvent(
+                eventType: .hapticTransient,
+                parameters: [
+                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.88),
+                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.15)
+                ],
+                relativeTime: 0
+            ),
+            CHHapticEvent(
+                eventType: .hapticTransient,
+                parameters: [
+                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.50),
+                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.10)
+                ],
+                relativeTime: 0.12
+            ),
+            CHHapticEvent(
+                eventType: .hapticTransient,
+                parameters: [
+                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.25),
+                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.08)
+                ],
+                relativeTime: 0.24
+            )
+        ]
+        return try CHHapticPattern(events: events, parameters: [])
     }
 
     /// Splash haptic when touching fluid for the first time

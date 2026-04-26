@@ -1,0 +1,36 @@
+diff --git a/nagi.xcodeproj/project.pbxproj b/nagi.xcodeproj/project.pbxproj
+index 1b76b9d..752b422 100644
+--- a/nagi.xcodeproj/project.pbxproj
++++ b/nagi.xcodeproj/project.pbxproj
+@@ -65,6 +65,7 @@
+ 		'A1000101' /* SceneDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000101' /* SceneDebugView.swift */; };
+ 		'A1000102' /* ABComparisonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000102' /* ABComparisonView.swift */; };
+ 		'A1000103' /* StudioTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000103' /* StudioTab.swift */; };
++		'A1000104' /* WavesShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000104' /* WavesShader.metal */; };
+ /* End PBXBuildFile section */
+
+ /* Begin PBXFileReference section */
+@@ -111,7 +112,6 @@
+ 		'B1000041' = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = OrbsShader.metal; sourceTree = "<group>"; };
+ 		'B1000042' = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ParticlesShader.metal; sourceTree = "<group>"; };
+ 		'B1000043' = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SlimeShader.metal; sourceTree = "<group>"; };
+-		'B1000044' = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = WavesShader.metal; sourceTree = "<group>"; };
+ 		'B1000045' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureType.swift; sourceTree = "<group>"; };
+ 		'B1000046' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEngine.swift; sourceTree = "<group>"; };
+ 		'B1000048' = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = FractalShader.metal; sourceTree = "<group>"; };
+@@ -127,6 +127,7 @@
+ 		'B1000101' /* SceneDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDebugView.swift; sourceTree = "<group>"; };
+ 		'B1000102' /* ABComparisonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABComparisonView.swift; sourceTree = "<group>"; };
+ 		'B1000103' /* StudioTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioTab.swift; sourceTree = "<group>"; };
++		'B1000104' /* WavesShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = nagi/Shaders/WavesShader.metal; sourceTree = SOURCE_ROOT; };
+ /* End PBXFileReference section */
+
+ /* Begin PBXFrameworksBuildPhase section */
+@@ -510,6 +511,7 @@
+ 				A1000101,
+ 				A1000102,
+ 				A1000103,
++				A1000104,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};

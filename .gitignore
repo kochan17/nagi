@@ -33,3 +33,10 @@ Pods/
 
 # Node (cleanup from Expo)
 node_modules/
+
+# Claude Code
+.claude/settings.local.json
+.claude/worktrees/
+
+# XcodeBuildMCP local config
+.xcodebuildmcp/

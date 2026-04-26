@@ -1,0 +1,5 @@
+#include <metal_stdlib>
+using namespace metal;
+
+kernel void wavesPlaceholder(uint2 gid [[thread_position_in_grid]]) {
+}

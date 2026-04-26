@@ -1,0 +1,19 @@
+(no diff: nagi.xcodeproj/project.pbxproj was already registered for WavesShader.metal at the start of this task)
+
+Pre-existing registration found in nagi.xcodeproj/project.pbxproj:
+
+  Line 52:  'A1000044' = {isa = PBXBuildFile; fileRef = B1000044; };
+  Line 114: 'B1000044' = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = WavesShader.metal; sourceTree = "<group>"; };
+  Line 327: B1000044  (inside Shaders group children, group id E1000018)
+  Line 492: A1000044  (inside PBXSourcesBuildPhase F1000002 files list)
+
+All four sites required for "in the build target" are present:
+  1. PBXBuildFile entry          -> A1000044
+  2. PBXFileReference entry      -> B1000044 (path WavesShader.metal, type sourcecode.metal)
+  3. Group children list         -> Shaders group references B1000044
+  4. PBXSourcesBuildPhase files  -> Sources phase references A1000044
+
+Therefore WavesShader.metal will be compiled into the .metallib by the Metal compile step
+of the Sources build phase. No pbxproj edit was needed.
+
+`git diff nagi.xcodeproj/project.pbxproj` output: (empty)

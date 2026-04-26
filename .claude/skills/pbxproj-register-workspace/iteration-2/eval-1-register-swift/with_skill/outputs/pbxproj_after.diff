@@ -1,0 +1,51 @@
+diff --git a/nagi.xcodeproj/project.pbxproj b/nagi.xcodeproj/project.pbxproj
+index 1b76b9d..5789c63 100644
+--- a/nagi.xcodeproj/project.pbxproj
++++ b/nagi.xcodeproj/project.pbxproj
+@@ -65,6 +65,7 @@
+ 		'A1000101' /* SceneDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000101' /* SceneDebugView.swift */; };
+ 		'A1000102' /* ABComparisonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000102' /* ABComparisonView.swift */; };
+ 		'A1000103' /* StudioTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000103' /* StudioTab.swift */; };
++		'A1000104' /* WavesScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000104' /* WavesScene.swift */; };
+ /* End PBXBuildFile section */
+ 
+ /* Begin PBXFileReference section */
+@@ -127,6 +128,7 @@
+ 		'B1000101' /* SceneDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDebugView.swift; sourceTree = "<group>"; };
+ 		'B1000102' /* ABComparisonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABComparisonView.swift; sourceTree = "<group>"; };
+ 		'B1000103' /* StudioTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioTab.swift; sourceTree = "<group>"; };
++		'B1000104' /* WavesScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WavesScene.swift; sourceTree = "<group>"; };
+ /* End PBXFileReference section */
+ 
+ /* Begin PBXFrameworksBuildPhase section */
+@@ -357,6 +359,7 @@
+ 			isa = PBXGroup;
+ 			children = (
+ 				'E1000032' /* Bonfire */,
++				'E1000100' /* Waves */,
+ 			);
+ 			path = Scenes;
+ 			sourceTree = "<group>";
+@@ -381,6 +384,14 @@
+ 			path = Bonfire;
+ 			sourceTree = "<group>";
+ 		};
++		'E1000100' = {
++			isa = PBXGroup;
++			children = (
++				'B1000104' /* WavesScene.swift */,
++			);
++			path = Waves;
++			sourceTree = "<group>";
++		};
+ /* End PBXGroup section */
+ 
+ /* Begin PBXNativeTarget section */
+@@ -510,6 +521,7 @@
+ 				A1000101,
+ 				A1000102,
+ 				A1000103,
++				A1000104,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};

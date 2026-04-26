@@ -1,0 +1,17 @@
+=== Created files ===
+total 8
+drwxr-xr-x@ 3 kotaishida  staff    96 Apr 26 15:34 .
+drwxr-xr-x@ 4 kotaishida  staff   128 Apr 26 15:34 ..
+-rw-r--r--@ 1 kotaishida  staff  4053 Apr 26 15:34 ForestScene.swift
+
+=== ForestShader.metal ===
+-rw-r--r--@ 1 kotaishida  staff  12220 Apr 26 15:35 nagi/Shaders/ForestShader.metal
+
+=== Modified files ===
+ M nagi.xcodeproj/project.pbxproj
+ M nagi/Models/TextureType.swift
+ M nagi/Services/HapticEngine.swift
+ M nagi/Services/LocalizationManager.swift
+ M nagi/Views/Relax/RelaxView.swift
+
+=== Untracked new files ===

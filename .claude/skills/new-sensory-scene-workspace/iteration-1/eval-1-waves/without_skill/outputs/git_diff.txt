@@ -1,0 +1,373 @@
+diff --git a/nagi.xcodeproj/project.pbxproj b/nagi.xcodeproj/project.pbxproj
+index 1b76b9d..fdb54e9 100644
+--- a/nagi.xcodeproj/project.pbxproj
++++ b/nagi.xcodeproj/project.pbxproj
+@@ -65,6 +65,10 @@
+ 		'A1000101' /* SceneDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000101' /* SceneDebugView.swift */; };
+ 		'A1000102' /* ABComparisonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000102' /* ABComparisonView.swift */; };
+ 		'A1000103' /* StudioTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000103' /* StudioTab.swift */; };
++		'A1000104' /* ForestShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000104' /* ForestShader.metal */; };
++		'A1000105' /* ForestScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000105' /* ForestScene.swift */; };
++		'A1000106' /* MoonlitWavesShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000106' /* MoonlitWavesShader.metal */; };
++		'A1000107' /* MoonlitWavesScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000107' /* MoonlitWavesScene.swift */; };
+ /* End PBXBuildFile section */
+ 
+ /* Begin PBXFileReference section */
+@@ -127,6 +131,10 @@
+ 		'B1000101' /* SceneDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDebugView.swift; sourceTree = "<group>"; };
+ 		'B1000102' /* ABComparisonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABComparisonView.swift; sourceTree = "<group>"; };
+ 		'B1000103' /* StudioTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioTab.swift; sourceTree = "<group>"; };
++		'B1000104' /* ForestShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = nagi/Shaders/ForestShader.metal; sourceTree = SOURCE_ROOT; };
++		'B1000105' /* ForestScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = nagi/Scenes/Forest/ForestScene.swift; sourceTree = SOURCE_ROOT; };
++		'B1000106' /* MoonlitWavesShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = nagi/Shaders/MoonlitWavesShader.metal; sourceTree = SOURCE_ROOT; };
++		'B1000107' /* MoonlitWavesScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = nagi/Scenes/MoonlitWaves/MoonlitWavesScene.swift; sourceTree = SOURCE_ROOT; };
+ /* End PBXFileReference section */
+ 
+ /* Begin PBXFrameworksBuildPhase section */
+@@ -510,6 +518,10 @@
+ 				A1000101,
+ 				A1000102,
+ 				A1000103,
++				A1000104,
++				A1000105,
++				A1000106,
++				A1000107,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+diff --git a/nagi/Models/TextureType.swift b/nagi/Models/TextureType.swift
+index 55182ac..95467de 100644
+--- a/nagi/Models/TextureType.swift
++++ b/nagi/Models/TextureType.swift
+@@ -211,6 +211,8 @@ enum TextureType: String, CaseIterable, Identifiable {
+     case waves
+     case fractal
+     case campfire
++    case moonlitWaves
++    case forest
+ 
+     var id: String { rawValue }
+ 
+@@ -225,6 +227,8 @@ enum TextureType: String, CaseIterable, Identifiable {
+         case .waves: return "waves_render"
+         case .fractal: return "fractal_render"
+         case .campfire: return "campfire_render"
++        case .moonlitWaves: return "moonlit_waves_render"
++        case .forest: return "forest_render"
+         }
+     }
+ 
+@@ -247,6 +251,8 @@ enum TextureType: String, CaseIterable, Identifiable {
+         case .waves: return .forBetterSleeping
+         case .fractal: return .categoryFractal
+         case .campfire: return .categoryCampfire
++        case .moonlitWaves: return .categoryMoonlitWaves
++        case .forest: return .categoryForest
+         }
+     }
+ 
+@@ -260,6 +266,8 @@ enum TextureType: String, CaseIterable, Identifiable {
+         case .waves: return "water.waves"
+         case .fractal: return "atom"
+         case .campfire: return "flame.fill"
++        case .moonlitWaves: return "moon.stars.fill"
++        case .forest: return "tree.fill"
+         }
+     }
+ 
+@@ -269,6 +277,8 @@ enum TextureType: String, CaseIterable, Identifiable {
+         switch self {
+         case .slime: return "slime_velvet"
+         case .campfire: return nil
++        case .moonlitWaves: return nil
++        case .forest: return nil
+         default: return nil
+         }
+     }
+@@ -283,6 +293,8 @@ enum TextureType: String, CaseIterable, Identifiable {
+         case .waves: return "waves_ocean"
+         case .fractal: return "kaleidoscope_chime"
+         case .campfire: return "campfire_ambient"
++        case .moonlitWaves: return "moonlit_waves_ambient"
++        case .forest: return "forest_ambient"
+         }
+     }
+ 
+@@ -296,6 +308,8 @@ enum TextureType: String, CaseIterable, Identifiable {
+         case .waves: return [.blue.opacity(0.6), .teal.opacity(0.4)]
+         case .fractal: return [.red.opacity(0.6), .purple.opacity(0.4)]
+         case .campfire: return [.black, Color(red: 0.6, green: 0.2, blue: 0.0).opacity(0.9), Color(red: 0.35, green: 0.04, blue: 0.0).opacity(0.8)]
++        case .moonlitWaves: return [.black, Color(red: 0.04, green: 0.06, blue: 0.18).opacity(0.95), Color(red: 0.18, green: 0.22, blue: 0.42).opacity(0.75)]
++        case .forest: return [Color(red: 0.04, green: 0.07, blue: 0.05).opacity(0.95), Color(red: 0.10, green: 0.16, blue: 0.08).opacity(0.85), Color(red: 0.42, green: 0.30, blue: 0.10).opacity(0.55)]
+         }
+     }
+ 
+diff --git a/nagi/Services/HapticEngine.swift b/nagi/Services/HapticEngine.swift
+index 2504725..32725da 100644
+--- a/nagi/Services/HapticEngine.swift
++++ b/nagi/Services/HapticEngine.swift
+@@ -34,6 +34,11 @@ struct HapticProfile {
+             return HapticProfile(baseIntensity: 0.55, baseSharpness: 0.6, releaseStyle: .ripple)
+         case .campfire:
+             return HapticProfile(baseIntensity: 0.5, baseSharpness: 0.7, releaseStyle: .snap)
++        case .moonlitWaves:
++            return HapticProfile(baseIntensity: 0.45, baseSharpness: 0.35, releaseStyle: .ripple)
++        case .forest:
++            // Footfall on leaves: medium intensity, fairly sharp crinkle, snappy decay
++            return HapticProfile(baseIntensity: 0.45, baseSharpness: 0.65, releaseStyle: .snap)
+         }
+     }
+ }
+@@ -322,6 +327,79 @@ final class HapticEngine {
+         return try CHHapticPattern(events: [event], parameters: [])
+     }
+ 
++    // MARK: - Moonlit Waves pattern factories
++
++    /// Light raindrop-like tap when a finger first touches the water.
++    static func makeMoonlitWavesDropTapPattern() throws -> CHHapticPattern {
++        let event = CHHapticEvent(
++            eventType: .hapticTransient,
++            parameters: [
++                CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.45),
++                CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.55)
++            ],
++            relativeTime: 0
++        )
++        return try CHHapticPattern(events: [event], parameters: [])
++    }
++
++    /// Three spaced ripples that decay outward — fired when a touch ends.
++    static func makeMoonlitWavesRippleSpreadPattern() throws -> CHHapticPattern {
++        let events = [
++            CHHapticEvent(
++                eventType: .hapticTransient,
++                parameters: [
++                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.55),
++                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.40)
++                ],
++                relativeTime: 0
++            ),
++            CHHapticEvent(
++                eventType: .hapticTransient,
++                parameters: [
++                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.35),
++                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.30)
++                ],
++                relativeTime: 0.13
++            ),
++            CHHapticEvent(
++                eventType: .hapticTransient,
++                parameters: [
++                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.18),
++                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.22)
++                ],
++                relativeTime: 0.27
++            )
++        ]
++        return try CHHapticPattern(events: events, parameters: [])
++    }
++
++    /// Slow continuous swell that fades in and out — used for hold / longPress.
++    static func makeMoonlitWavesDeepSwellPattern(duration: TimeInterval = 0.7) throws -> CHHapticPattern {
++        let event = CHHapticEvent(
++            eventType: .hapticContinuous,
++            parameters: [
++                CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.30),
++                CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.20),
++                CHHapticEventParameter(parameterID: .attackTime, value: Float(duration * 0.25)),
++                CHHapticEventParameter(parameterID: .decayTime, value: Float(duration * 0.6)),
++                CHHapticEventParameter(parameterID: .sustained, value: 0)
++            ],
++            relativeTime: 0,
++            duration: duration
++        )
++        // Intensity envelope: ramps up gently, swells, then fades
++        let intensityCurve = CHHapticParameterCurve(
++            parameterID: .hapticIntensityControl,
++            controlPoints: [
++                CHHapticParameterCurve.ControlPoint(relativeTime: 0, value: 0.05),
++                CHHapticParameterCurve.ControlPoint(relativeTime: duration * 0.4, value: 0.55),
++                CHHapticParameterCurve.ControlPoint(relativeTime: duration, value: 0.0)
++            ],
++            relativeTime: 0
++        )
++        return try CHHapticPattern(events: [event], parameterCurves: [intensityCurve])
++    }
++
+     static func makeCampfireSustainedRustlePattern(duration: TimeInterval = 0.4) throws -> CHHapticPattern {
+         let event = CHHapticEvent(
+             eventType: .hapticContinuous,
+@@ -347,6 +425,89 @@ final class HapticEngine {
+         return try CHHapticPattern(events: [event], parameterCurves: [intensityCurve])
+     }
+ 
++    // MARK: - Forest pattern factories
++
++    /// A single dry-leaf crinkle: short, sharp, low-medium intensity.
++    /// Plays on tap — like a single leaf snapping underfoot.
++    static func makeForestLeafCrunchPattern() throws -> CHHapticPattern {
++        let event = CHHapticEvent(
++            eventType: .hapticTransient,
++            parameters: [
++                CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.5),
++                CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.85)
++            ],
++            relativeTime: 0
++        )
++        return try CHHapticPattern(events: [event], parameters: [])
++    }
++
++    /// A multi-tap rustle that simulates leaves shifting and settling underfoot
++    /// after pressure. Used on touch end — the "after-rustle".
++    static func makeForestLeafRustlePattern() throws -> CHHapticPattern {
++        let events: [CHHapticEvent] = [
++            CHHapticEvent(
++                eventType: .hapticTransient,
++                parameters: [
++                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.4),
++                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.75)
++                ],
++                relativeTime: 0
++            ),
++            CHHapticEvent(
++                eventType: .hapticTransient,
++                parameters: [
++                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.28),
++                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.7)
++                ],
++                relativeTime: 0.05
++            ),
++            CHHapticEvent(
++                eventType: .hapticTransient,
++                parameters: [
++                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.18),
++                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.6)
++                ],
++                relativeTime: 0.11
++            ),
++            CHHapticEvent(
++                eventType: .hapticTransient,
++                parameters: [
++                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.10),
++                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.5)
++                ],
++                relativeTime: 0.18
++            )
++        ]
++        return try CHHapticPattern(events: events, parameters: [])
++    }
++
++    /// A heavier branch creak / press — long press emits this.
++    /// A low-frequency, sustained groan.
++    static func makeForestBranchCreakPattern(duration: TimeInterval = 0.5) throws -> CHHapticPattern {
++        let event = CHHapticEvent(
++            eventType: .hapticContinuous,
++            parameters: [
++                CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.55),
++                CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.2),
++                CHHapticEventParameter(parameterID: .attackTime, value: 0.05),
++                CHHapticEventParameter(parameterID: .decayTime, value: Float(duration * 0.7)),
++                CHHapticEventParameter(parameterID: .sustained, value: 1)
++            ],
++            relativeTime: 0,
++            duration: duration
++        )
++        let intensityCurve = CHHapticParameterCurve(
++            parameterID: .hapticIntensityControl,
++            controlPoints: [
++                CHHapticParameterCurve.ControlPoint(relativeTime: 0, value: 0.55),
++                CHHapticParameterCurve.ControlPoint(relativeTime: duration * 0.4, value: 0.7),
++                CHHapticParameterCurve.ControlPoint(relativeTime: duration, value: 0.1)
++            ],
++            relativeTime: 0
++        )
++        return try CHHapticPattern(events: [event], parameterCurves: [intensityCurve])
++    }
++
+     /// Splash haptic when touching fluid for the first time
+     func playSplashHaptic() {
+         guard let engine else { return }
+diff --git a/nagi/Services/LocalizationManager.swift b/nagi/Services/LocalizationManager.swift
+index a40255d..3f73a4c 100644
+--- a/nagi/Services/LocalizationManager.swift
++++ b/nagi/Services/LocalizationManager.swift
+@@ -173,6 +173,8 @@ enum L10nKey: String {
+     case categoryOrbs
+     case categoryFractal
+     case categoryCampfire
++    case categoryMoonlitWaves
++    case categoryForest
+ 
+     // TextureVariant names
+     case variantFluidsMagenta
+@@ -392,6 +394,8 @@ private let enTranslations: [L10nKey: String] = [
+     .categoryOrbs: "Orbs",
+     .categoryFractal: "Fractal",
+     .categoryCampfire: "Campfire",
++    .categoryMoonlitWaves: "Waves",
++    .categoryForest: "Forest",
+     .variantFluidsMagenta: "Magenta",
+     .variantFluidsCyanMist: "Cyan Mist",
+     .variantFluidsSunsetGold: "Sunset Gold",
+@@ -590,6 +594,8 @@ private let jaTranslations: [L10nKey: String] = [
+     .categoryOrbs: "オーブ",
+     .categoryFractal: "フラクタル",
+     .categoryCampfire: "焚き火",
++    .categoryMoonlitWaves: "月夜の波",
++    .categoryForest: "森",
+     .variantFluidsMagenta: "マゼンタ",
+     .variantFluidsCyanMist: "シアンミスト",
+     .variantFluidsSunsetGold: "サンセットゴールド",
+@@ -788,6 +794,8 @@ private let koTranslations: [L10nKey: String] = [
+     .categoryOrbs: "오브",
+     .categoryFractal: "프랙탈",
+     .categoryCampfire: "모닥불",
++    .categoryMoonlitWaves: "달빛 파도",
++    .categoryForest: "숲",
+     .variantFluidsMagenta: "마젠타",
+     .variantFluidsCyanMist: "시안 미스트",
+     .variantFluidsSunsetGold: "선셋 골드",
+@@ -986,6 +994,8 @@ private let zhTranslations: [L10nKey: String] = [
+     .categoryOrbs: "光球",
+     .categoryFractal: "分形",
+     .categoryCampfire: "篝火",
++    .categoryMoonlitWaves: "月夜的波浪",
++    .categoryForest: "森林",
+     .variantFluidsMagenta: "品红",
+     .variantFluidsCyanMist: "青色薄雾",
+     .variantFluidsSunsetGold: "夕阳金",
+diff --git a/nagi/Views/Relax/RelaxView.swift b/nagi/Views/Relax/RelaxView.swift
+index 60348c4..1e43ad6 100644
+--- a/nagi/Views/Relax/RelaxView.swift
++++ b/nagi/Views/Relax/RelaxView.swift
+@@ -54,9 +54,14 @@ struct RelaxView: View {
+ 
+     @ViewBuilder
+     private func destinationView(for category: TextureType) -> some View {
+-        if category == .campfire {
++        switch category {
++        case .campfire:
+             SceneStage(scene: BonfireScene())
+-        } else {
++        case .moonlitWaves:
++            SceneStage(scene: MoonlitWavesScene())
++        case .forest:
++            SceneStage(scene: ForestScene())
++        default:
+             CategoryDetailView(category: category)
+         }
+     }
+diff --git a/scripts/add_to_pbxproj_text.py b/scripts/add_to_pbxproj_text.py
+index ff0a201..4efe4da 100644
+--- a/scripts/add_to_pbxproj_text.py
++++ b/scripts/add_to_pbxproj_text.py
+@@ -30,6 +30,8 @@ FILES_TO_ADD: list[tuple[str, str]] = [
+     ("nagi/Studio/SceneDebugView.swift",      "sourcecode.swift"),
+     ("nagi/Studio/ABComparisonView.swift",    "sourcecode.swift"),
+     ("nagi/Studio/StudioTab.swift",           "sourcecode.swift"),
++    ("nagi/Shaders/MoonlitWavesShader.metal",         "sourcecode.metal"),
++    ("nagi/Scenes/MoonlitWaves/MoonlitWavesScene.swift", "sourcecode.swift"),
+ ]
+ 
+ 

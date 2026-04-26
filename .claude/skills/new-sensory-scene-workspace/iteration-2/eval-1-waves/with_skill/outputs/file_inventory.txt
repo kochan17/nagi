@@ -1,0 +1,19 @@
+## git status --short
+
+ M nagi.xcodeproj/project.pbxproj
+ M nagi/Models/TextureType.swift
+ M nagi/Services/HapticEngine.swift
+ M nagi/Services/LocalizationManager.swift
+ M nagi/Views/Relax/RelaxView.swift
+A  nagi/Scenes/MoonlitWaves/MoonlitWavesScene.swift
+A  nagi/Shaders/MoonlitWavesShader.metal
+
+## Line counts (wc -l)
+
+     109 nagi/Scenes/MoonlitWaves/MoonlitWavesScene.swift   (NEW)
+     246 nagi/Shaders/MoonlitWavesShader.metal               (NEW)
+     311 nagi/Models/TextureType.swift                       (was 306, +5 lines)
+     464 nagi/Services/HapticEngine.swift                    (was 390, +74 lines)
+    1062 nagi/Services/LocalizationManager.swift             (was 1058, +4 enum lines + 4 dict lines = +5 lines net per dict)
+     200 nagi/Views/Relax/RelaxView.swift                    (was 198, +2 lines)
+    2392 total

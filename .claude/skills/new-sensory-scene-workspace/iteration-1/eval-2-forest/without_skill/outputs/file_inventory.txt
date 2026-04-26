@@ -1,0 +1,20 @@
+Forest scene — file inventory
+================================
+
+NEW FILES
+---------
+nagi/Shaders/ForestShader.metal             (363 lines)  — procedural forest visual: layered trunks, canopy fbm, god rays, dust specks, touch ripple
+nagi/Scenes/Forest/ForestScene.swift        (116 lines)  — SensoryScene conformance: visual binding, haptic prep, touch fanout
+
+MODIFIED FILES
+--------------
+nagi/Models/TextureType.swift               — added .forest case across all switch statements (kernelName, displayNameKey, iconName, materialTextureName, soundFileName, gradientColors)
+nagi/Services/HapticEngine.swift            — added HapticProfile.profile(for: .forest) + 3 pattern factories (makeForestLeafCrunchPattern, makeForestLeafRustlePattern, makeForestBranchCreakPattern)
+nagi/Services/LocalizationManager.swift     — added L10nKey.categoryForest + 4 translations (en/ja/ko/zh)
+nagi/Views/Relax/RelaxView.swift            — added `case .forest: SceneStage(scene: ForestScene())` to destinationView
+nagi.xcodeproj/project.pbxproj              — registered ForestShader.metal and ForestScene.swift (BuildFile A1000104/A1000105, FileRef B1000104/B1000105) into PBXBuildFile / PBXFileReference / PBXSourcesBuildPhase F1000002
+
+OUT OF SCOPE / NOT TOUCHED
+--------------------------
+nagi/Resources/                              — no audio asset bundled (forest_ambient.wav). Scene gracefully no-ops audio if the file isn't found, matching BonfireScene's pattern. Bundling the audio file is a separate Resource-level task.
+nagi/Scenes/MoonlitWaves/, nagi/Shaders/MoonlitWavesShader.metal — produced by a parallel agent (Waves eval); NOT part of this Forest task.

@@ -1,0 +1,773 @@
+diff --git a/nagi.xcodeproj/project.pbxproj b/nagi.xcodeproj/project.pbxproj
+index 1b76b9d..85c3531 100644
+--- a/nagi.xcodeproj/project.pbxproj
++++ b/nagi.xcodeproj/project.pbxproj
+@@ -65,6 +65,8 @@
+ 		'A1000101' /* SceneDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000101' /* SceneDebugView.swift */; };
+ 		'A1000102' /* ABComparisonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000102' /* ABComparisonView.swift */; };
+ 		'A1000103' /* StudioTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000103' /* StudioTab.swift */; };
++		'A1000104' /* ForestScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000104' /* ForestScene.swift */; };
++		'A1000105' /* ForestShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000105' /* ForestShader.metal */; };
+ /* End PBXBuildFile section */
+ 
+ /* Begin PBXFileReference section */
+@@ -127,6 +129,8 @@
+ 		'B1000101' /* SceneDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDebugView.swift; sourceTree = "<group>"; };
+ 		'B1000102' /* ABComparisonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABComparisonView.swift; sourceTree = "<group>"; };
+ 		'B1000103' /* StudioTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioTab.swift; sourceTree = "<group>"; };
++		'B1000104' /* ForestScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForestScene.swift; sourceTree = "<group>"; };
++		'B1000105' /* ForestShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ForestShader.metal; sourceTree = "<group>"; };
+ /* End PBXFileReference section */
+ 
+ /* Begin PBXFrameworksBuildPhase section */
+@@ -327,6 +331,7 @@
+ 				B1000044,
+ 				B1000048,
+ 				'B1000097' /* CampfireShader.metal */,
++				'B1000105' /* ForestShader.metal */,
+ 			);
+ 			path = Shaders;
+ 			sourceTree = "<group>";
+@@ -357,6 +362,7 @@
+ 			isa = PBXGroup;
+ 			children = (
+ 				'E1000032' /* Bonfire */,
++				'E1000100' /* Forest */,
+ 			);
+ 			path = Scenes;
+ 			sourceTree = "<group>";
+@@ -381,6 +387,14 @@
+ 			path = Bonfire;
+ 			sourceTree = "<group>";
+ 		};
++		'E1000100' = {
++			isa = PBXGroup;
++			children = (
++				'B1000104' /* ForestScene.swift */,
++			);
++			path = Forest;
++			sourceTree = "<group>";
++		};
+ /* End PBXGroup section */
+ 
+ /* Begin PBXNativeTarget section */
+@@ -510,6 +524,8 @@
+ 				A1000101,
+ 				A1000102,
+ 				A1000103,
++				A1000104,
++				A1000105,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+diff --git a/nagi/Models/TextureType.swift b/nagi/Models/TextureType.swift
+index 55182ac..7b4da09 100644
+--- a/nagi/Models/TextureType.swift
++++ b/nagi/Models/TextureType.swift
+@@ -211,6 +211,7 @@ enum TextureType: String, CaseIterable, Identifiable {
+     case waves
+     case fractal
+     case campfire
++    case forest
+ 
+     var id: String { rawValue }
+ 
+@@ -225,6 +226,7 @@ enum TextureType: String, CaseIterable, Identifiable {
+         case .waves: return "waves_render"
+         case .fractal: return "fractal_render"
+         case .campfire: return "campfire_render"
++        case .forest: return "forest_render"
+         }
+     }
+ 
+@@ -247,6 +249,7 @@ enum TextureType: String, CaseIterable, Identifiable {
+         case .waves: return .forBetterSleeping
+         case .fractal: return .categoryFractal
+         case .campfire: return .categoryCampfire
++        case .forest: return .categoryForest
+         }
+     }
+ 
+@@ -260,6 +263,7 @@ enum TextureType: String, CaseIterable, Identifiable {
+         case .waves: return "water.waves"
+         case .fractal: return "atom"
+         case .campfire: return "flame.fill"
++        case .forest: return "leaf.fill"
+         }
+     }
+ 
+@@ -269,6 +273,7 @@ enum TextureType: String, CaseIterable, Identifiable {
+         switch self {
+         case .slime: return "slime_velvet"
+         case .campfire: return nil
++        case .forest: return nil
+         default: return nil
+         }
+     }
+@@ -283,6 +288,7 @@ enum TextureType: String, CaseIterable, Identifiable {
+         case .waves: return "waves_ocean"
+         case .fractal: return "kaleidoscope_chime"
+         case .campfire: return "campfire_ambient"
++        case .forest: return "forest_ambient"
+         }
+     }
+ 
+@@ -296,6 +302,11 @@ enum TextureType: String, CaseIterable, Identifiable {
+         case .waves: return [.blue.opacity(0.6), .teal.opacity(0.4)]
+         case .fractal: return [.red.opacity(0.6), .purple.opacity(0.4)]
+         case .campfire: return [.black, Color(red: 0.6, green: 0.2, blue: 0.0).opacity(0.9), Color(red: 0.35, green: 0.04, blue: 0.0).opacity(0.8)]
++        case .forest: return [
++            Color(red: 0.02, green: 0.06, blue: 0.04),
++            Color(red: 0.06, green: 0.18, blue: 0.09).opacity(0.92),
++            Color(red: 0.18, green: 0.30, blue: 0.12).opacity(0.85)
++        ]
+         }
+     }
+ 
+diff --git a/nagi/Services/HapticEngine.swift b/nagi/Services/HapticEngine.swift
+index 2504725..a7cc0f6 100644
+--- a/nagi/Services/HapticEngine.swift
++++ b/nagi/Services/HapticEngine.swift
+@@ -34,6 +34,10 @@ struct HapticProfile {
+             return HapticProfile(baseIntensity: 0.55, baseSharpness: 0.6, releaseStyle: .ripple)
+         case .campfire:
+             return HapticProfile(baseIntensity: 0.5, baseSharpness: 0.7, releaseStyle: .snap)
++        case .forest:
++            // Crunching leaf litter underfoot — moderate intensity, fairly sharp,
++            // releases as a brief settling rustle.
++            return HapticProfile(baseIntensity: 0.55, baseSharpness: 0.75, releaseStyle: .snap)
+         }
+     }
+ }
+@@ -347,6 +351,81 @@ final class HapticEngine {
+         return try CHHapticPattern(events: [event], parameterCurves: [intensityCurve])
+     }
+ 
++    // MARK: - Forest pattern factories
++
++    /// First-step crunch on dry leaf litter. Rapid micro-cluster of three
++    /// transients: the texture of many small leaves breaking under one footfall.
++    static func makeForestLeafCrunchPattern() throws -> CHHapticPattern {
++        let events: [CHHapticEvent] = [
++            CHHapticEvent(
++                eventType: .hapticTransient,
++                parameters: [
++                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.7),
++                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.85)
++                ],
++                relativeTime: 0
++            ),
++            CHHapticEvent(
++                eventType: .hapticTransient,
++                parameters: [
++                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.5),
++                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.95)
++                ],
++                relativeTime: 0.025
++            ),
++            CHHapticEvent(
++                eventType: .hapticTransient,
++                parameters: [
++                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.35),
++                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.7)
++                ],
++                relativeTime: 0.06
++            )
++        ]
++        return try CHHapticPattern(events: events, parameters: [])
++    }
++
++    /// A single dry twig snapping deeper in the litter — strong, sharp, isolated.
++    static func makeForestTwigSnapPattern() throws -> CHHapticPattern {
++        let event = CHHapticEvent(
++            eventType: .hapticTransient,
++            parameters: [
++                CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.95),
++                CHHapticEventParameter(parameterID: .hapticSharpness, value: 1.0)
++            ],
++            relativeTime: 0
++        )
++        return try CHHapticPattern(events: [event], parameters: [])
++    }
++
++    /// Long settling rustle as leaves fall back into place after a touch.
++    /// Continuous + decay curve from a soft sustained whisper down to silence.
++    static func makeForestLeafRustlePattern(duration: TimeInterval = 0.55) throws -> CHHapticPattern {
++        let event = CHHapticEvent(
++            eventType: .hapticContinuous,
++            parameters: [
++                CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.40),
++                CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.55),
++                CHHapticEventParameter(parameterID: .attackTime, value: 0.0),
++                CHHapticEventParameter(parameterID: .decayTime, value: Float(duration * 0.85)),
++                CHHapticEventParameter(parameterID: .sustained, value: 0)
++            ],
++            relativeTime: 0,
++            duration: duration
++        )
++        // Intensity curve: 0.40 → 0.05 over the full duration
++        let intensityCurve = CHHapticParameterCurve(
++            parameterID: .hapticIntensityControl,
++            controlPoints: [
++                CHHapticParameterCurve.ControlPoint(relativeTime: 0, value: 0.40),
++                CHHapticParameterCurve.ControlPoint(relativeTime: duration * 0.5, value: 0.22),
++                CHHapticParameterCurve.ControlPoint(relativeTime: duration, value: 0.05)
++            ],
++            relativeTime: 0
++        )
++        return try CHHapticPattern(events: [event], parameterCurves: [intensityCurve])
++    }
++
+     /// Splash haptic when touching fluid for the first time
+     func playSplashHaptic() {
+         guard let engine else { return }
+diff --git a/nagi/Services/LocalizationManager.swift b/nagi/Services/LocalizationManager.swift
+index a40255d..fdc897c 100644
+--- a/nagi/Services/LocalizationManager.swift
++++ b/nagi/Services/LocalizationManager.swift
+@@ -173,6 +173,7 @@ enum L10nKey: String {
+     case categoryOrbs
+     case categoryFractal
+     case categoryCampfire
++    case categoryForest
+ 
+     // TextureVariant names
+     case variantFluidsMagenta
+@@ -392,6 +393,7 @@ private let enTranslations: [L10nKey: String] = [
+     .categoryOrbs: "Orbs",
+     .categoryFractal: "Fractal",
+     .categoryCampfire: "Campfire",
++    .categoryForest: "Forest",
+     .variantFluidsMagenta: "Magenta",
+     .variantFluidsCyanMist: "Cyan Mist",
+     .variantFluidsSunsetGold: "Sunset Gold",
+@@ -590,6 +592,7 @@ private let jaTranslations: [L10nKey: String] = [
+     .categoryOrbs: "オーブ",
+     .categoryFractal: "フラクタル",
+     .categoryCampfire: "焚き火",
++    .categoryForest: "森",
+     .variantFluidsMagenta: "マゼンタ",
+     .variantFluidsCyanMist: "シアンミスト",
+     .variantFluidsSunsetGold: "サンセットゴールド",
+@@ -788,6 +791,7 @@ private let koTranslations: [L10nKey: String] = [
+     .categoryOrbs: "오브",
+     .categoryFractal: "프랙탈",
+     .categoryCampfire: "모닥불",
++    .categoryForest: "숲",
+     .variantFluidsMagenta: "마젠타",
+     .variantFluidsCyanMist: "시안 미스트",
+     .variantFluidsSunsetGold: "선셋 골드",
+@@ -986,6 +990,7 @@ private let zhTranslations: [L10nKey: String] = [
+     .categoryOrbs: "光球",
+     .categoryFractal: "分形",
+     .categoryCampfire: "篝火",
++    .categoryForest: "森林",
+     .variantFluidsMagenta: "品红",
+     .variantFluidsCyanMist: "青色薄雾",
+     .variantFluidsSunsetGold: "夕阳金",
+diff --git a/nagi/Views/Relax/RelaxView.swift b/nagi/Views/Relax/RelaxView.swift
+index 60348c4..49a9a42 100644
+--- a/nagi/Views/Relax/RelaxView.swift
++++ b/nagi/Views/Relax/RelaxView.swift
+@@ -54,9 +54,12 @@ struct RelaxView: View {
+ 
+     @ViewBuilder
+     private func destinationView(for category: TextureType) -> some View {
+-        if category == .campfire {
++        switch category {
++        case .campfire:
+             SceneStage(scene: BonfireScene())
+-        } else {
++        case .forest:
++            SceneStage(scene: ForestScene())
++        default:
+             CategoryDetailView(category: category)
+         }
+     }
+
+==== UNTRACKED FILES ====
+
+==== NEW FILE: nagi/Scenes/Forest/ForestScene.swift ====
+import SwiftUI
+import os.log
+
+// MARK: - Touch state (shared reference between onTouch and VisualBody)
+
+final class ForestTouchState: ObservableObject {
+    @Published var touchLocation: CGPoint? = nil
+    @Published var previousTouchLocation: CGPoint? = nil
+    @Published var isTouching: Bool = false
+}
+
+// MARK: - Scene
+
+struct ForestScene: SensoryScene {
+    let id = "forest"
+    let title = "Forest"
+
+    // Shared reference: onTouch writes here, ForestVisual observes via @ObservedObject.
+    // Created once per ForestScene value; struct copy semantics preserve the reference.
+    private let touchState = ForestTouchState()
+
+    private let logger = Logger(subsystem: "app.nagi", category: "ForestScene")
+
+    @ViewBuilder
+    func makeVisual(context: SensoryContext) -> some View {
+        ForestVisual(touchState: touchState)
+    }
+
+    func prepare(context: SensoryContext) async {
+        // Register haptic patterns: deep, ancient forest with crunching leaf litter underfoot.
+        do {
+            let leafCrunch = try HapticEngine.makeForestLeafCrunchPattern()
+            context.haptics.register(name: "leaf_crunch", pattern: leafCrunch)
+        } catch {
+            logger.warning("leaf_crunch pattern failed: \(error.localizedDescription, privacy: .public)")
+        }
+
+        do {
+            let twigSnap = try HapticEngine.makeForestTwigSnapPattern()
+            context.haptics.register(name: "twig_snap", pattern: twigSnap)
+        } catch {
+            logger.warning("twig_snap pattern failed: \(error.localizedDescription, privacy: .public)")
+        }
+
+        do {
+            let leafRustle = try HapticEngine.makeForestLeafRustlePattern()
+            context.haptics.register(name: "leaf_rustle", pattern: leafRustle)
+        } catch {
+            logger.warning("leaf_rustle pattern failed: \(error.localizedDescription, privacy: .public)")
+        }
+
+        // Register audio asset (skip silently if not yet bundled)
+        guard let url = Bundle.main.url(forResource: "forest_ambient", withExtension: "wav")
+                ?? Bundle.main.url(forResource: "forest_ambient", withExtension: "aiff") else {
+            logger.warning("forest_ambient not found in bundle — skipping audio registration")
+            return
+        }
+        context.audio.registerSoundAsset(identifier: "forest_ambient", url: url)
+    }
+
+    func onTouch(_ event: TouchEvent, context: SensoryContext) {
+        switch event {
+        case .began(let position):
+            let eventID = context.clock.beginEvent(label: "forest.tap")
+            touchState.previousTouchLocation = nil
+            touchState.touchLocation = position
+            touchState.isTouching = true
+            // First step: dry leaves crunch underfoot
+            context.haptics.play(name: "leaf_crunch")
+            context.clock.completeEvent(id: eventID, actuator: "haptic")
+
+        case .moved(let from, let to, _):
+            touchState.previousTouchLocation = from
+            touchState.touchLocation = to
+            touchState.isTouching = true
+
+        case .ended(let position):
+            touchState.isTouching = false
+            touchState.touchLocation = position
+            // Lift: leaves rustle and settle back
+            context.haptics.play(name: "leaf_rustle")
+
+        case .longPress(let position):
+            // Press deeper into the forest floor — a hidden twig snaps
+            touchState.touchLocation = position
+            context.haptics.play(name: "twig_snap")
+        }
+    }
+
+    func teardown(context: SensoryContext) {
+        // Engine lifecycle is owned by SceneDirector; nothing to do here.
+    }
+}
+
+// MARK: - Visual body
+
+private struct ForestVisual: View {
+    @ObservedObject var touchState: ForestTouchState
+
+    var body: some View {
+        FluidMetalView(
+            touchLocation: $touchState.touchLocation,
+            previousTouchLocation: $touchState.previousTouchLocation,
+            isTouching: $touchState.isTouching,
+            textureType: .forest
+        )
+        .ignoresSafeArea()
+    }
+}
+
+==== NEW FILE: nagi/Shaders/ForestShader.metal ====
+#include <metal_stdlib>
+using namespace metal;
+
+// Mirrors FluidUniforms layout in FluidShaders.metal — keep these fields in sync.
+struct FluidUniforms {
+    float2 resolution;
+    float2 touch;
+    float2 touchVelocity;
+    float touchActive;
+    float dt;
+    float viscosity;
+    float diffusion;
+    float time;
+    float3 tint;
+};
+
+// MARK: - Hash / noise utilities (prefixed forest_ to avoid collisions across shader files)
+
+static float forest_hash(float2 p) {
+    float3 p3 = fract(float3(p.xyx) * 0.1031);
+    p3 += dot(p3, p3.yzx + 33.33);
+    return fract((p3.x + p3.y) * p3.z);
+}
+
+static float forest_hash1(float n) {
+    return fract(sin(n) * 43758.5453123);
+}
+
+static float forest_noise(float2 p) {
+    float2 i = floor(p);
+    float2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    float a = forest_hash(i);
+    float b = forest_hash(i + float2(1, 0));
+    float c = forest_hash(i + float2(0, 1));
+    float d = forest_hash(i + float2(1, 1));
+    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+
+static float forest_fbm(float2 p, float time, int octaves) {
+    float v = 0.0;
+    float a = 0.5;
+    float2 shift = float2(time * 0.05, -time * 0.03);
+    for (int i = 0; i < octaves; i++) {
+        v += a * forest_noise(p + shift);
+        p *= 2.07;
+        a *= 0.5;
+        shift *= 1.15;
+    }
+    return v;
+}
+
+// Slow leaf-canopy FBM: drifts gently with breeze.
+static float forest_canopy_fbm(float2 p, float time) {
+    float v = 0.0;
+    float a = 0.55;
+    // Wind bows the canopy laterally
+    float2 wind = float2(sin(time * 0.45) * 0.12 + time * 0.04,
+                         cos(time * 0.32) * 0.08);
+    for (int i = 0; i < 5; i++) {
+        v += a * forest_noise(p + wind);
+        p *= 1.95;
+        a *= 0.52;
+        wind *= 1.18;
+    }
+    return v;
+}
+
+// Voronoi-ish leaf pattern for canopy gaps.
+static float forest_leaf_cells(float2 p, float time) {
+    float2 i = floor(p);
+    float2 f = fract(p);
+    float minDist = 1.0;
+    for (int yo = -1; yo <= 1; yo++) {
+        for (int xo = -1; xo <= 1; xo++) {
+            float2 g = float2(float(xo), float(yo));
+            float2 o = float2(forest_hash(i + g + 17.0),
+                              forest_hash(i + g + 91.0));
+            // Animate jitter softly so gaps shimmer with breeze
+            o = 0.5 + 0.5 * sin(time * 0.6 + 6.2831 * o);
+            float2 r = g + o - f;
+            float d = dot(r, r);
+            minDist = min(minDist, d);
+        }
+    }
+    return sqrt(minDist);
+}
+
+// MARK: - Tree silhouette helpers
+
+// Returns log-style trunk mask + tinted bark color for a vertical tree
+// centered at cx, with thickness `thick` (in UV units).
+static float forest_trunk_mask(float fxNorm, float thick, float taper, float fy) {
+    // Slight taper toward top
+    float t = thick * (1.0 - taper * fy);
+    return smoothstep(t, t * 0.6, abs(fxNorm));
+}
+
+// Bark grain — vertical streaks with low-frequency knots.
+static float forest_bark(float2 uv, float seed) {
+    float vert = forest_fbm(float2(uv.x * 14.0 + seed, uv.y * 1.5), 0.0, 3);
+    float knots = forest_fbm(uv * float2(2.5, 1.2) + seed, 0.0, 3);
+    return mix(vert, knots, 0.35);
+}
+
+// MARK: - forest_render kernel
+
+kernel void forest_render(
+    texture2d<float, access::write> output [[texture(0)]],
+    constant FluidUniforms &u             [[buffer(0)]],
+    uint2 gid                             [[thread_position_in_grid]]
+) {
+    int w = int(u.resolution.x);
+    int h = int(u.resolution.y);
+    if (int(gid.x) >= w || int(gid.y) >= h) return;
+
+    float2 uv = float2(gid) / u.resolution;
+    // Y increases downward in Metal textures; flip so 0 = bottom (forest floor), 1 = top (canopy).
+    float2 fUV = float2(uv.x, 1.0 - uv.y);
+
+    float t = u.time;
+
+    // --- Touch influence ---
+    // Touch acts like a hand brushing through foliage: rustle origin + light glint.
+    float2 touchUV = float2(u.touch.x / u.resolution.x, 1.0 - u.touch.y / u.resolution.y);
+    float touchActive = (u.touchActive > 0.5) ? 1.0 : 0.0;
+    float distToTouch = length(fUV - touchUV);
+    float touchHalo = exp(-distToTouch * distToTouch / 0.018) * touchActive;
+
+    // ============================================================
+    // 1. Atmospheric depth — far canopy, mid forest, near floor
+    // ============================================================
+    // Far layer: deep mossy green + dim blue-green mist
+    float3 farMist = mix(float3(0.018, 0.045, 0.030),  // floor depth (cold shadow)
+                        float3(0.055, 0.095, 0.060),   // mid canopy haze
+                        smoothstep(0.0, 0.55, fUV.y));
+    // Hint of early-morning warm light at mid-height
+    float morningGlow = smoothstep(0.30, 0.65, fUV.y) * smoothstep(0.85, 0.55, fUV.y);
+    farMist += float3(0.05, 0.04, 0.018) * morningGlow * 0.6;
+
+    float3 color = farMist;
+
+    // ============================================================
+    // 2. Background trees (far, blurred silhouettes — 3 trunks)
+    // ============================================================
+    // Each trunk has a fixed x position, slight wobble from breeze.
+    float canopyBreeze = sin(t * 0.35) * 0.006;
+    {
+        // Trunk parameters: cx, thick, height, depth (0 = far)
+        const float3 farTrunks[4] = {
+            float3(0.08, 0.045, 0.95), // x, thickness, top-height
+            float3(0.32, 0.038, 0.92),
+            float3(0.71, 0.052, 0.97),
+            float3(0.93, 0.041, 0.93)
+        };
+        for (int i = 0; i < 4; i++) {
+            float cx = farTrunks[i].x + canopyBreeze * (forest_hash1(float(i) + 2.7) - 0.5);
+            float thick = farTrunks[i].y;
+            float top = farTrunks[i].z;
+            if (fUV.y < top) {
+                float fxN = (fUV.x - cx) / max(thick, 0.0001);
+                float maskRaw = forest_trunk_mask((fUV.x - cx), thick, 0.18, fUV.y);
+                if (maskRaw > 0.001) {
+                    // Vertical fade so trunk emerges from the floor mist
+                    float verticalFade = smoothstep(0.0, 0.18, fUV.y) * smoothstep(top, top - 0.1, fUV.y);
+                    float mask = maskRaw * verticalFade;
+                    // Far-tree bark — low contrast, blue-shifted (atmospheric perspective)
+                    float bark = forest_bark(float2(fUV.x * 4.0, fUV.y), float(i) * 13.0);
+                    float3 farBark = mix(float3(0.04, 0.06, 0.045),
+                                         float3(0.08, 0.10, 0.075),
+                                         bark);
+                    // Bias toward background color so trees recede
+                    farBark = mix(farMist, farBark, 0.55);
+                    color = mix(color, farBark, mask * 0.85);
+                }
+            }
+        }
+    }
+
+    // ============================================================
+    // 3. Mid trees (more detailed, warmer green-brown)
+    // ============================================================
+    {
+        // Mid trunks: cx, thick, top
+        const float3 midTrunks[3] = {
+            float3(0.20, 0.075, 1.0),
+            float3(0.55, 0.090, 1.0),
+            float3(0.84, 0.068, 1.0)
+        };
+        for (int i = 0; i < 3; i++) {
+            float cx = midTrunks[i].x + canopyBreeze * 0.4;
+            float thick = midTrunks[i].y;
+            float top = midTrunks[i].z;
+            float maskRaw = forest_trunk_mask((fUV.x - cx), thick, 0.22, fUV.y);
+            if (maskRaw > 0.001) {
+                float verticalFade = smoothstep(0.0, 0.05, fUV.y);
+                float mask = maskRaw * verticalFade;
+                // Bark grain — more detailed up close
+                float2 barkUV = float2((fUV.x - cx) * 28.0, fUV.y * 1.8);
+                float bark = forest_bark(barkUV, float(i) * 7.0);
+                float moss = forest_fbm(float2((fUV.x - cx) * 10.0, fUV.y * 3.0), t * 0.02, 3);
+                moss = smoothstep(0.45, 0.7, moss) * (1.0 - smoothstep(0.5, 0.9, fUV.y));
+
+                float3 trunkColor = mix(float3(0.06, 0.045, 0.030),
+                                       float3(0.18, 0.13, 0.085),
+                                       bark);
+                // Moss patches on the lower trunk
+                trunkColor = mix(trunkColor, float3(0.10, 0.18, 0.08), moss * 0.7);
+                // Shadow from canopy darkens upper trunk
+                trunkColor *= mix(1.0, 0.55, smoothstep(0.4, 0.85, fUV.y));
+
+                color = mix(color, trunkColor, mask);
+            }
+        }
+    }
+
+    // ============================================================
+    // 4. Forest floor — leaf litter and shadows
+    // ============================================================
+    if (fUV.y < 0.22) {
+        float floorY = fUV.y / 0.22;
+        // Leaf litter: small clustered patches with warm browns and damp greens.
+        float litter = forest_fbm(float2(fUV.x * 14.0, floorY * 8.0), t * 0.03, 4);
+        float patches = forest_fbm(float2(fUV.x * 4.0, floorY * 2.0), t * 0.01, 3);
+        float3 floorBase = mix(float3(0.025, 0.030, 0.018),
+                              float3(0.13, 0.085, 0.040),
+                              litter);
+        // Damp-mossy patches
+        floorBase = mix(floorBase, float3(0.05, 0.10, 0.045), smoothstep(0.55, 0.75, patches) * 0.5);
+        // Floor receives little light — darken near the camera (bottom of screen)
+        float floorShadow = mix(0.4, 1.0, floorY);
+        color = mix(color, floorBase * floorShadow, smoothstep(0.0, 0.2, 0.22 - fUV.y));
+    }
+
+    // ============================================================
+    // 5. Canopy / leaves (top 60% of screen, layered with parallax)
+    // ============================================================
+    // Three depth layers: deep canopy (back), mid leaves, near foliage.
+    if (fUV.y > 0.30) {
+        // Back layer — densest, darkest
+        float backLeaves = forest_canopy_fbm(fUV * float2(7.0, 5.0) + float2(3.1, t * 0.06), t);
+        float backMask = smoothstep(0.30, 0.85, fUV.y);
+        float3 backLeafCol = mix(float3(0.030, 0.060, 0.035),
+                                float3(0.075, 0.140, 0.060),
+                                backLeaves);
+        color = mix(color, backLeafCol, backMask * smoothstep(0.45, 0.75, backLeaves) * 0.85);
+
+        // Mid layer — voronoi cells make leaf-shaped clusters with gaps for light
+        float cellD = forest_leaf_cells(fUV * float2(11.0, 8.0) + float2(t * 0.02, 0.0), t);
+        float midLeaf = 1.0 - smoothstep(0.15, 0.55, cellD);
+        float3 midLeafCol = mix(float3(0.060, 0.115, 0.055),
+                                float3(0.145, 0.235, 0.105),
+                                forest_canopy_fbm(fUV * 9.0, t));
+        color = mix(color, midLeafCol, midLeaf * smoothstep(0.40, 0.95, fUV.y) * 0.85);
+
+        // Near foliage — bright tips at the very top, with breeze sway
+        float swayX = sin(t * 0.7 + fUV.x * 4.0) * 0.012;
+        float2 nearUV = float2(fUV.x + swayX, fUV.y);
+        float nearLeaves = forest_canopy_fbm(nearUV * float2(15.0, 11.0) + float2(0.0, t * 0.08), t);
+        float nearMask = smoothstep(0.65, 1.0, fUV.y);
+        float3 nearLeafCol = mix(float3(0.10, 0.18, 0.075),
+                                 float3(0.22, 0.34, 0.13),
+                                 nearLeaves);
+        color = mix(color, nearLeafCol, nearMask * smoothstep(0.5, 0.85, nearLeaves) * 0.7);
+    }
+
+    // ============================================================
+    // 6. Dappled light — god rays piercing the canopy
+    // ============================================================
+    {
+        // Light source position (off-screen top-right)
+        float2 sunDir = normalize(float2(0.4, 0.85));
+        // Project current pixel along ray direction
+        float rayCoord = dot(fUV - float2(0.5, 0.0), sunDir);
+        // Modulate by a slow noise on the perpendicular axis to break into shafts.
+        float2 perp = float2(-sunDir.y, sunDir.x);
+        float perpCoord = dot(fUV, perp);
+        float shafts = forest_fbm(float2(perpCoord * 16.0, t * 0.08), 0.0, 3);
+        // Use leaf cells to gate the rays — light only passes through gaps
+        float gap = smoothstep(0.32, 0.55, forest_leaf_cells(fUV * float2(8.0, 6.0) + float2(2.0, t * 0.03), t));
+        float ray = smoothstep(0.45, 0.85, shafts) * gap;
+        // Brightest at mid-height, fading toward floor and canopy top
+        float verticalRay = smoothstep(0.10, 0.50, fUV.y) * smoothstep(0.95, 0.55, fUV.y);
+        float rayStrength = ray * verticalRay * 1.2;
+        // Warm morning sunlight color
+        float3 sunColor = float3(1.05, 0.85, 0.55);
+        color += sunColor * rayStrength * 0.55;
+
+        // Pools of light on the forest floor where rays land
+        if (fUV.y < 0.25) {
+            float pool = smoothstep(0.55, 0.85, forest_noise(float2(fUV.x * 6.0 + t * 0.05, fUV.y * 8.0)));
+            float poolGap = gap;
+            color += sunColor * pool * poolGap * 0.35 * smoothstep(0.0, 0.18, fUV.y);
+        }
+    }
+
+    // ============================================================
+    // 7. Floating dust motes / suspended particles in the light shafts
+    // ============================================================
+    {
+        for (int i = 0; i < 18; i++) {
+            float seed = float(i) * 79.31;
+            // Drift slowly upward and laterally
+            float speed = forest_hash1(seed) * 0.05 + 0.02;
+            float lifetime = forest_hash1(seed + 1.0) * 6.0 + 4.0;
+            float phase = forest_hash1(seed + 2.0);
+            float baseX = forest_hash1(seed + 3.0) * 0.7 + 0.15; // 0.15..0.85
+            float cycle = fract(phase + t / lifetime);
+            float age = cycle * lifetime;
+
+            float drift = sin(age * 0.6 + seed) * 0.04;
+            float px = baseX + drift;
+            float py = 0.20 + cycle * 0.65; // rises across mid-canopy
+
+            float fade = smoothstep(0.0, 0.2, cycle) * smoothstep(1.0, 0.7, cycle);
+            // Only visible when in/near a light shaft
+            float dustGap = smoothstep(0.30, 0.60, forest_leaf_cells(float2(px, py) * float2(8.0, 6.0) + float2(2.0, t * 0.03), t));
+
+            if (py > 0.0 && py < 1.0 && fade > 0.0) {
+                float dist = length(fUV - float2(px, py));
+                float size = 0.0035 + forest_hash1(seed + 4.0) * 0.003;
+                float glow = exp(-dist * dist / (size * size));
+                color += float3(1.0, 0.92, 0.7) * glow * fade * dustGap * 0.6;
+            }
+        }
+    }
+
+    // ============================================================
+    // 8. Touch interaction — finger brushes the canopy
+    // ============================================================
+    if (u.touchActive > 0.5) {
+        // Local rustle: increase leaf brightness and add a subtle warm glow halo.
+        float rustleNoise = forest_fbm(fUV * 30.0 + t * 0.8, 0.0, 3);
+        float rustle = touchHalo * smoothstep(0.4, 0.7, rustleNoise);
+        color += float3(0.18, 0.30, 0.13) * rustle * 1.3;
+
+        // Faint warm bloom right at touch
+        color += float3(0.9, 0.75, 0.5) * exp(-distToTouch * distToTouch / 0.004) * 0.45;
+    }
+
+    // ============================================================
+    // 9. Atmospheric haze / depth fog across the whole image
+    // ============================================================
+    {
+        // Slight blue-green mist that thickens toward the back (mid-distance)
+        float fogDepth = smoothstep(0.10, 0.55, fUV.y) * smoothstep(0.95, 0.55, fUV.y);
+        float3 fogColor = float3(0.07, 0.11, 0.085);
+        color = mix(color, fogColor, fogDepth * 0.18);
+    }
+
+    // ============================================================
+    // 10. Vignette + tonemap + tint
+    // ============================================================
+    float2 vigUV = uv - 0.5;
+    float vignette = 1.0 - dot(vigUV, vigUV) * 1.05;
+    color *= saturate(vignette);
+
+    // Mild exposure boost for the deep greens
+    color *= 1.25;
+
+    // ACES-ish tonemap
+    float3 x = color;
+    color = (x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14);
+
+    // Gamma
+    color = pow(saturate(color), float3(1.0 / 2.2));
+
+    // Variant tint multiplier
+    color *= u.tint;
+
+    output.write(float4(saturate(color), 1.0), gid);
+}

@@ -1,0 +1,37 @@
+## git status --short
+
+ M nagi.xcodeproj/project.pbxproj
+ M nagi/Models/TextureType.swift
+ M nagi/Services/HapticEngine.swift
+ M nagi/Services/LocalizationManager.swift
+ M nagi/Views/Relax/RelaxView.swift
+ M scripts/add_to_pbxproj_text.py
+?? .claude/skills/new-sensory-scene-workspace/
+?? nagi/Scenes/Forest/
+?? nagi/Scenes/MoonlitWaves/
+?? nagi/Shaders/ForestShader.metal
+?? nagi/Shaders/MoonlitWavesShader.metal
+
+
+## File line counts (`wc -l`)
+
+  111  nagi/Scenes/MoonlitWaves/MoonlitWavesScene.swift   (NEW — Waves SensoryScene)
+  263  nagi/Shaders/MoonlitWavesShader.metal              (NEW — moonlit_waves_render kernel)
+  116  nagi/Scenes/Forest/ForestScene.swift               (NEW — auto-scaffolded by hook, wired in)
+  363  nagi/Shaders/ForestShader.metal                    (NEW — auto-scaffolded by hook)
+  319  nagi/Models/TextureType.swift                      (MODIFIED — +.moonlitWaves +.forest)
+  550  nagi/Services/HapticEngine.swift                   (MODIFIED — +moonlit-waves & forest factories)
+ 1067  nagi/Services/LocalizationManager.swift            (MODIFIED — +categoryMoonlitWaves +categoryForest in 4 locales)
+  202  nagi/Views/Relax/RelaxView.swift                   (MODIFIED — switch routes .moonlitWaves & .forest to SceneStage)
+  120  scripts/add_to_pbxproj_text.py                     (MODIFIED — added MoonlitWaves entries to FILES_TO_ADD)
+
+
+## Build verification
+
+- swiftc -typecheck on all 64 .swift files in nagi/  → 0 errors (1 pre-existing unused-var warning in FluidMetalView)
+- xcrun metal -c on MoonlitWavesShader.metal         → compiles clean
+- xcrun metal -c on ForestShader.metal               → compiles clean
+- pbxproj registration of MoonlitWavesShader.metal   → A1000106 / B1000106 (Sources phase)
+- pbxproj registration of MoonlitWavesScene.swift    → A1000107 / B1000107 (Sources phase)
+- ForestShader.metal / ForestScene.swift were already auto-registered by hook (A1000104/5, B1000104/5)
+- iOS 26.4 SDK not installed locally so a full xcodebuild was not run, but type-check + Metal compile pass.

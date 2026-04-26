@@ -1,0 +1,15 @@
+=== Tracked changes ===
+ M nagi.xcodeproj/project.pbxproj
+ M nagi/Models/TextureType.swift
+ M nagi/Services/HapticEngine.swift
+ M nagi/Services/LocalizationManager.swift
+ M nagi/Views/Relax/RelaxView.swift
+?? nagi/Scenes/Forest/
+?? nagi/Shaders/ForestShader.metal
+
+=== Created files ===
+total 8
+drwxr-xr-x@ 3 kotaishida  staff    96 Apr 26 16:43 .
+drwxr-xr-x@ 4 kotaishida  staff   128 Apr 26 16:42 ..
+-rw-r--r--@ 1 kotaishida  staff  4065 Apr 26 16:43 ForestScene.swift
+-rw-r--r--@ 1 kotaishida  staff  13257 Apr 26 16:44 /Users/kotaishida/projects/personal/nagi/.claude/worktrees/agent-a670a157c095623cb/nagi/Shaders/ForestShader.metal

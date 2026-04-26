@@ -1,0 +1,667 @@
+diff --git a/nagi.xcodeproj/project.pbxproj b/nagi.xcodeproj/project.pbxproj
+index 1b76b9d..3f0051c 100644
+--- a/nagi.xcodeproj/project.pbxproj
++++ b/nagi.xcodeproj/project.pbxproj
+@@ -65,6 +65,8 @@
+ 		'A1000101' /* SceneDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000101' /* SceneDebugView.swift */; };
+ 		'A1000102' /* ABComparisonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000102' /* ABComparisonView.swift */; };
+ 		'A1000103' /* StudioTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000103' /* StudioTab.swift */; };
++		'A1000104' /* MoonlitWavesScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000104' /* MoonlitWavesScene.swift */; };
++		'A1000105' /* MoonlitWavesShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 'B1000105' /* MoonlitWavesShader.metal */; };
+ /* End PBXBuildFile section */
+ 
+ /* Begin PBXFileReference section */
+@@ -127,6 +129,8 @@
+ 		'B1000101' /* SceneDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDebugView.swift; sourceTree = "<group>"; };
+ 		'B1000102' /* ABComparisonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABComparisonView.swift; sourceTree = "<group>"; };
+ 		'B1000103' /* StudioTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioTab.swift; sourceTree = "<group>"; };
++		'B1000104' /* MoonlitWavesScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoonlitWavesScene.swift; sourceTree = "<group>"; };
++		'B1000105' /* MoonlitWavesShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = MoonlitWavesShader.metal; sourceTree = "<group>"; };
+ /* End PBXFileReference section */
+ 
+ /* Begin PBXFrameworksBuildPhase section */
+@@ -327,6 +331,7 @@
+ 				B1000044,
+ 				B1000048,
+ 				'B1000097' /* CampfireShader.metal */,
++				'B1000105' /* MoonlitWavesShader.metal */,
+ 			);
+ 			path = Shaders;
+ 			sourceTree = "<group>";
+@@ -357,6 +362,7 @@
+ 			isa = PBXGroup;
+ 			children = (
+ 				'E1000032' /* Bonfire */,
++				'E1000100' /* MoonlitWaves */,
+ 			);
+ 			path = Scenes;
+ 			sourceTree = "<group>";
+@@ -381,6 +387,14 @@
+ 			path = Bonfire;
+ 			sourceTree = "<group>";
+ 		};
++		'E1000100' = {
++			isa = PBXGroup;
++			children = (
++				'B1000104' /* MoonlitWavesScene.swift */,
++			);
++			path = MoonlitWaves;
++			sourceTree = "<group>";
++		};
+ /* End PBXGroup section */
+ 
+ /* Begin PBXNativeTarget section */
+@@ -510,6 +524,8 @@
+ 				A1000101,
+ 				A1000102,
+ 				A1000103,
++				A1000104,
++				A1000105,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+diff --git a/nagi/Models/TextureType.swift b/nagi/Models/TextureType.swift
+index 55182ac..2cb8192 100644
+--- a/nagi/Models/TextureType.swift
++++ b/nagi/Models/TextureType.swift
+@@ -211,6 +211,7 @@ enum TextureType: String, CaseIterable, Identifiable {
+     case waves
+     case fractal
+     case campfire
++    case moonlitWaves
+ 
+     var id: String { rawValue }
+ 
+@@ -225,6 +226,7 @@ enum TextureType: String, CaseIterable, Identifiable {
+         case .waves: return "waves_render"
+         case .fractal: return "fractal_render"
+         case .campfire: return "campfire_render"
++        case .moonlitWaves: return "moonlit_waves_render"
+         }
+     }
+ 
+@@ -247,6 +249,7 @@ enum TextureType: String, CaseIterable, Identifiable {
+         case .waves: return .forBetterSleeping
+         case .fractal: return .categoryFractal
+         case .campfire: return .categoryCampfire
++        case .moonlitWaves: return .categoryMoonlitWaves
+         }
+     }
+ 
+@@ -260,6 +263,7 @@ enum TextureType: String, CaseIterable, Identifiable {
+         case .waves: return "water.waves"
+         case .fractal: return "atom"
+         case .campfire: return "flame.fill"
++        case .moonlitWaves: return "moon.stars.fill"
+         }
+     }
+ 
+@@ -269,6 +273,7 @@ enum TextureType: String, CaseIterable, Identifiable {
+         switch self {
+         case .slime: return "slime_velvet"
+         case .campfire: return nil
++        case .moonlitWaves: return nil
+         default: return nil
+         }
+     }
+@@ -283,6 +288,7 @@ enum TextureType: String, CaseIterable, Identifiable {
+         case .waves: return "waves_ocean"
+         case .fractal: return "kaleidoscope_chime"
+         case .campfire: return "campfire_ambient"
++        case .moonlitWaves: return "moonlit_waves_ambient"
+         }
+     }
+ 
+@@ -296,6 +302,7 @@ enum TextureType: String, CaseIterable, Identifiable {
+         case .waves: return [.blue.opacity(0.6), .teal.opacity(0.4)]
+         case .fractal: return [.red.opacity(0.6), .purple.opacity(0.4)]
+         case .campfire: return [.black, Color(red: 0.6, green: 0.2, blue: 0.0).opacity(0.9), Color(red: 0.35, green: 0.04, blue: 0.0).opacity(0.8)]
++        case .moonlitWaves: return [.black, Color(red: 0.04, green: 0.06, blue: 0.18).opacity(0.95), Color(red: 0.18, green: 0.22, blue: 0.42).opacity(0.75)]
+         }
+     }
+ 
+diff --git a/nagi/Services/HapticEngine.swift b/nagi/Services/HapticEngine.swift
+index 2504725..b8eecc3 100644
+--- a/nagi/Services/HapticEngine.swift
++++ b/nagi/Services/HapticEngine.swift
+@@ -34,6 +34,8 @@ struct HapticProfile {
+             return HapticProfile(baseIntensity: 0.55, baseSharpness: 0.6, releaseStyle: .ripple)
+         case .campfire:
+             return HapticProfile(baseIntensity: 0.5, baseSharpness: 0.7, releaseStyle: .snap)
++        case .moonlitWaves:
++            return HapticProfile(baseIntensity: 0.45, baseSharpness: 0.35, releaseStyle: .ripple)
+         }
+     }
+ }
+@@ -322,6 +324,79 @@ final class HapticEngine {
+         return try CHHapticPattern(events: [event], parameters: [])
+     }
+ 
++    // MARK: - Moonlit Waves pattern factories
++
++    /// Light raindrop-like tap when a finger first touches the water.
++    static func makeMoonlitWavesDropTapPattern() throws -> CHHapticPattern {
++        let event = CHHapticEvent(
++            eventType: .hapticTransient,
++            parameters: [
++                CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.45),
++                CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.55)
++            ],
++            relativeTime: 0
++        )
++        return try CHHapticPattern(events: [event], parameters: [])
++    }
++
++    /// Three spaced ripples that decay outward — fired when a touch ends.
++    static func makeMoonlitWavesRippleSpreadPattern() throws -> CHHapticPattern {
++        let events = [
++            CHHapticEvent(
++                eventType: .hapticTransient,
++                parameters: [
++                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.55),
++                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.40)
++                ],
++                relativeTime: 0
++            ),
++            CHHapticEvent(
++                eventType: .hapticTransient,
++                parameters: [
++                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.35),
++                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.30)
++                ],
++                relativeTime: 0.13
++            ),
++            CHHapticEvent(
++                eventType: .hapticTransient,
++                parameters: [
++                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.18),
++                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.22)
++                ],
++                relativeTime: 0.27
++            )
++        ]
++        return try CHHapticPattern(events: events, parameters: [])
++    }
++
++    /// Slow continuous swell that fades in and out — used for hold / longPress.
++    static func makeMoonlitWavesDeepSwellPattern(duration: TimeInterval = 0.7) throws -> CHHapticPattern {
++        let event = CHHapticEvent(
++            eventType: .hapticContinuous,
++            parameters: [
++                CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.30),
++                CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.20),
++                CHHapticEventParameter(parameterID: .attackTime, value: Float(duration * 0.25)),
++                CHHapticEventParameter(parameterID: .decayTime, value: Float(duration * 0.6)),
++                CHHapticEventParameter(parameterID: .sustained, value: 0)
++            ],
++            relativeTime: 0,
++            duration: duration
++        )
++        // Intensity envelope: ramps up gently, swells, then fades
++        let intensityCurve = CHHapticParameterCurve(
++            parameterID: .hapticIntensityControl,
++            controlPoints: [
++                CHHapticParameterCurve.ControlPoint(relativeTime: 0, value: 0.05),
++                CHHapticParameterCurve.ControlPoint(relativeTime: duration * 0.4, value: 0.55),
++                CHHapticParameterCurve.ControlPoint(relativeTime: duration, value: 0.0)
++            ],
++            relativeTime: 0
++        )
++        return try CHHapticPattern(events: [event], parameterCurves: [intensityCurve])
++    }
++
+     static func makeCampfireSustainedRustlePattern(duration: TimeInterval = 0.4) throws -> CHHapticPattern {
+         let event = CHHapticEvent(
+             eventType: .hapticContinuous,
+diff --git a/nagi/Services/LocalizationManager.swift b/nagi/Services/LocalizationManager.swift
+index a40255d..f26e708 100644
+--- a/nagi/Services/LocalizationManager.swift
++++ b/nagi/Services/LocalizationManager.swift
+@@ -173,6 +173,7 @@ enum L10nKey: String {
+     case categoryOrbs
+     case categoryFractal
+     case categoryCampfire
++    case categoryMoonlitWaves
+ 
+     // TextureVariant names
+     case variantFluidsMagenta
+@@ -392,6 +393,7 @@ private let enTranslations: [L10nKey: String] = [
+     .categoryOrbs: "Orbs",
+     .categoryFractal: "Fractal",
+     .categoryCampfire: "Campfire",
++    .categoryMoonlitWaves: "Waves",
+     .variantFluidsMagenta: "Magenta",
+     .variantFluidsCyanMist: "Cyan Mist",
+     .variantFluidsSunsetGold: "Sunset Gold",
+@@ -590,6 +592,7 @@ private let jaTranslations: [L10nKey: String] = [
+     .categoryOrbs: "オーブ",
+     .categoryFractal: "フラクタル",
+     .categoryCampfire: "焚き火",
++    .categoryMoonlitWaves: "月夜の波",
+     .variantFluidsMagenta: "マゼンタ",
+     .variantFluidsCyanMist: "シアンミスト",
+     .variantFluidsSunsetGold: "サンセットゴールド",
+@@ -788,6 +791,7 @@ private let koTranslations: [L10nKey: String] = [
+     .categoryOrbs: "오브",
+     .categoryFractal: "프랙탈",
+     .categoryCampfire: "모닥불",
++    .categoryMoonlitWaves: "달빛 파도",
+     .variantFluidsMagenta: "마젠타",
+     .variantFluidsCyanMist: "시안 미스트",
+     .variantFluidsSunsetGold: "선셋 골드",
+@@ -986,6 +990,7 @@ private let zhTranslations: [L10nKey: String] = [
+     .categoryOrbs: "光球",
+     .categoryFractal: "分形",
+     .categoryCampfire: "篝火",
++    .categoryMoonlitWaves: "月夜的波浪",
+     .variantFluidsMagenta: "品红",
+     .variantFluidsCyanMist: "青色薄雾",
+     .variantFluidsSunsetGold: "夕阳金",
+diff --git a/nagi/Views/Relax/RelaxView.swift b/nagi/Views/Relax/RelaxView.swift
+index 60348c4..4fc6609 100644
+--- a/nagi/Views/Relax/RelaxView.swift
++++ b/nagi/Views/Relax/RelaxView.swift
+@@ -54,9 +54,12 @@ struct RelaxView: View {
+ 
+     @ViewBuilder
+     private func destinationView(for category: TextureType) -> some View {
+-        if category == .campfire {
++        switch category {
++        case .campfire:
+             SceneStage(scene: BonfireScene())
+-        } else {
++        case .moonlitWaves:
++            SceneStage(scene: MoonlitWavesScene())
++        default:
+             CategoryDetailView(category: category)
+         }
+     }
+
+# === Untracked files (full content) ===
+
+diff --git a/nagi/Scenes/MoonlitWaves/MoonlitWavesScene.swift b/nagi/Scenes/MoonlitWaves/MoonlitWavesScene.swift
+new file mode 100644
+index 0000000..191b7a4
+--- /dev/null
++++ b/nagi/Scenes/MoonlitWaves/MoonlitWavesScene.swift
+@@ -0,0 +1,111 @@
++import SwiftUI
++import os.log
++
++// MARK: - Touch state (shared reference between onTouch and VisualBody)
++
++final class MoonlitWavesTouchState: ObservableObject {
++    @Published var touchLocation: CGPoint? = nil
++    @Published var previousTouchLocation: CGPoint? = nil
++    @Published var isTouching: Bool = false
++}
++
++// MARK: - Scene
++
++struct MoonlitWavesScene: SensoryScene {
++    let id = "moonlit_waves"
++    let title = "Waves"
++
++    // Shared reference: onTouch writes here, MoonlitWavesVisual observes via @ObservedObject.
++    // Created once per MoonlitWavesScene value; struct copy semantics preserve the reference.
++    private let touchState = MoonlitWavesTouchState()
++
++    private let logger = Logger(subsystem: "app.nagi", category: "MoonlitWavesScene")
++
++    @ViewBuilder
++    func makeVisual(context: SensoryContext) -> some View {
++        MoonlitWavesVisual(touchState: touchState)
++    }
++
++    func prepare(context: SensoryContext) async {
++        // Register haptic patterns
++        do {
++            let dropTap = try HapticEngine.makeMoonlitWavesDropTapPattern()
++            context.haptics.register(name: "drop_tap", pattern: dropTap)
++        } catch {
++            logger.warning("drop_tap pattern failed: \(error.localizedDescription, privacy: .public)")
++        }
++
++        do {
++            let rippleSpread = try HapticEngine.makeMoonlitWavesRippleSpreadPattern()
++            context.haptics.register(name: "ripple_spread", pattern: rippleSpread)
++        } catch {
++            logger.warning("ripple_spread pattern failed: \(error.localizedDescription, privacy: .public)")
++        }
++
++        do {
++            let deepSwell = try HapticEngine.makeMoonlitWavesDeepSwellPattern()
++            context.haptics.register(name: "deep_swell", pattern: deepSwell)
++        } catch {
++            logger.warning("deep_swell pattern failed: \(error.localizedDescription, privacy: .public)")
++        }
++
++        // Register audio asset (optional; skip silently if not bundled yet)
++        guard let url = Bundle.main.url(forResource: "moonlit_waves_ambient", withExtension: "wav")
++                ?? Bundle.main.url(forResource: "moonlit_waves_ambient", withExtension: "aiff")
++                ?? Bundle.main.url(forResource: "waves_ocean", withExtension: "wav")
++                ?? Bundle.main.url(forResource: "waves_ocean", withExtension: "aiff") else {
++            logger.warning("moonlit_waves_ambient not found in bundle — skipping audio registration")
++            return
++        }
++        context.audio.registerSoundAsset(identifier: "moonlit_waves_ambient", url: url)
++    }
++
++    func onTouch(_ event: TouchEvent, context: SensoryContext) {
++        switch event {
++        case .began(let position):
++            let eventID = context.clock.beginEvent(label: "moonlit_waves.tap")
++            touchState.previousTouchLocation = nil
++            touchState.touchLocation = position
++            touchState.isTouching = true
++            context.haptics.play(name: "drop_tap")
++            context.clock.completeEvent(id: eventID, actuator: "haptic")
++
++        case .moved(let from, let to, _):
++            touchState.previousTouchLocation = from
++            touchState.touchLocation = to
++            touchState.isTouching = true
++
++        case .ended(let position):
++            touchState.isTouching = false
++            touchState.touchLocation = position
++            context.haptics.play(name: "ripple_spread")
++
++        case .longPress(let position):
++            // TODO: longPress detection — TouchReactor only emits began/moved/ended via DragGesture.
++            // A LongPressGesture overlay in SceneStage or a hold-duration timer in TouchReactor is
++            // required to generate this event.
++            touchState.touchLocation = position
++            context.haptics.play(name: "deep_swell")
++        }
++    }
++
++    func teardown(context: SensoryContext) {
++        // Engine lifecycle is owned by SceneDirector; nothing to do here.
++    }
++}
++
++// MARK: - Visual body
++
++private struct MoonlitWavesVisual: View {
++    @ObservedObject var touchState: MoonlitWavesTouchState
++
++    var body: some View {
++        FluidMetalView(
++            touchLocation: $touchState.touchLocation,
++            previousTouchLocation: $touchState.previousTouchLocation,
++            isTouching: $touchState.isTouching,
++            textureType: .moonlitWaves
++        )
++        .ignoresSafeArea()
++    }
++}
+diff --git a/nagi/Shaders/MoonlitWavesShader.metal b/nagi/Shaders/MoonlitWavesShader.metal
+new file mode 100644
+index 0000000..cdae880
+--- /dev/null
++++ b/nagi/Shaders/MoonlitWavesShader.metal
+@@ -0,0 +1,263 @@
++#include <metal_stdlib>
++using namespace metal;
++
++// Mirrors the layout in FluidShaders.metal — keep in sync.
++struct FluidUniforms {
++    float2 resolution;
++    float2 touch;
++    float2 touchVelocity;
++    float touchActive;
++    float dt;
++    float viscosity;
++    float diffusion;
++    float time;
++    float3 tint;
++};
++
++// MARK: - Hash / noise utilities (mw_ prefix to avoid collisions across shader files)
++
++static float mw_hash(float2 p) {
++    float3 p3 = fract(float3(p.xyx) * 0.1031);
++    p3 += dot(p3, p3.yzx + 33.33);
++    return fract((p3.x + p3.y) * p3.z);
++}
++
++static float mw_noise(float2 p) {
++    float2 i = floor(p);
++    float2 f = fract(p);
++    f = f * f * (3.0 - 2.0 * f);
++    float a = mw_hash(i);
++    float b = mw_hash(i + float2(1, 0));
++    float c = mw_hash(i + float2(0, 1));
++    float d = mw_hash(i + float2(1, 1));
++    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
++}
++
++static float mw_fbm(float2 p, float time, int octaves) {
++    float v = 0.0;
++    float a = 0.5;
++    float2 shift = float2(time * 0.05, time * 0.07);
++    for (int i = 0; i < octaves; i++) {
++        v += a * mw_noise(p + shift);
++        p *= 2.05;
++        a *= 0.5;
++        shift *= 1.15;
++    }
++    return v;
++}
++
++// MARK: - Wave height field
++// Long, slow ocean swell — overlapping low-frequency sine bands plus a gentle FBM
++// chop on top. Tuned for "deep ocean at night, slow gentle motion".
++
++static float oceanSwell(float2 uv, float t, float aspect) {
++    float2 p = uv;
++    p.x *= aspect;
++
++    float h = 0.0;
++    // Three primary swell directions, slow & long-period
++    h += sin(p.x * 3.4 + p.y * 1.1 + t * 0.45) * 0.40;
++    h += sin(p.x * 1.7 - p.y * 2.3 + t * 0.30) * 0.30;
++    h += sin(p.x * 5.1 + p.y * 4.2 - t * 0.22) * 0.18;
++    // Gentle chop layer
++    float chop = mw_fbm(p * 6.0 + float2(t * 0.08, -t * 0.05), t, 3);
++    h += (chop - 0.5) * 0.18;
++    return h;
++}
++
++// Concentric expanding ripple from a single point (touch).
++static float touchRipple(float2 uv, float2 center, float t, float aspect) {
++    float2 d = uv - center;
++    d.x *= aspect;
++    float r = length(d);
++
++    float h = 0.0;
++    const int rings = 5;
++    for (int k = 0; k < rings; k++) {
++        float offset = float(k) / float(rings);
++        float phase = fract(t * 0.55 + offset);
++        float radius = phase * 0.45;
++        float envelope = (1.0 - phase) * (1.0 - phase);
++        float wave = sin((r - radius) * 70.0 - phase * 3.14159) * envelope;
++        float band = smoothstep(0.014, 0.0, abs(r - radius));
++        h += wave * band * 0.55;
++    }
++    return h;
++}
++
++// MARK: - Moonlight reflection
++// A soft vertical band of moonlight on the water, broken up by ripples.
++
++static float3 moonlightReflection(float2 uv, float3 normal, float t) {
++    // Moon high in the sky, slightly off-center
++    float2 moonScreenPos = float2(0.55, 0.18);
++    float2 d = uv - moonScreenPos;
++    // Vertical reflection band: narrow in x, long in y (moon is "above" the ocean)
++    float bandX = exp(-d.x * d.x / 0.012);
++    float bandY = smoothstep(-0.05, 0.55, uv.y - moonScreenPos.y);
++    float band = bandX * bandY;
++
++    // Break the reflection up with normal-based glints
++    float glint = pow(max(0.0, normal.z * 0.5 + 0.5), 6.0);
++    glint *= 0.6 + 0.4 * mw_noise(uv * 80.0 + t * 0.3);
++
++    // Cool silver-white color
++    float3 moonColor = float3(0.78, 0.85, 1.0);
++    return moonColor * band * (0.55 + glint * 1.2);
++}
++
++// MARK: - Moon disk (subtle, low in the upper portion of the frame)
++
++static float3 moonDisk(float2 uv) {
++    float2 moonPos = float2(0.55, 0.18);
++    float d = distance(uv, moonPos);
++    float disk = smoothstep(0.055, 0.045, d);
++    // Soft halo
++    float halo = exp(-d * d / 0.005) * 0.35;
++    float3 moonCol = float3(0.92, 0.95, 1.0);
++    return moonCol * (disk * 0.95 + halo);
++}
++
++// MARK: - Stars (sparse, only above the horizon)
++
++static float starField(float2 uv, float t) {
++    if (uv.y < 0.32) return 0.0;
++    float2 grid = floor(uv * float2(140.0, 90.0));
++    float h = mw_hash(grid);
++    if (h < 0.985) return 0.0;
++    float2 cellUV = fract(uv * float2(140.0, 90.0)) - 0.5;
++    float dist = length(cellUV);
++    float twinkle = 0.5 + 0.5 * sin(t * (2.0 + h * 4.0) + h * 17.0);
++    return smoothstep(0.10, 0.0, dist) * twinkle * 0.85;
++}
++
++// MARK: - moonlit_waves_render kernel
++
++kernel void moonlit_waves_render(
++    texture2d<float, access::write> output [[texture(0)]],
++    constant FluidUniforms &u              [[buffer(0)]],
++    uint2 gid                              [[thread_position_in_grid]]
++) {
++    int w = int(u.resolution.x);
++    int h = int(u.resolution.y);
++    if (int(gid.x) >= w || int(gid.y) >= h) return;
++
++    float2 uv = float2(gid) / u.resolution;
++    // Y-flip: 0 = bottom, 1 = top — sky at top, ocean below the horizon
++    float2 sUV = float2(uv.x, 1.0 - uv.y);
++    float aspect = u.resolution.x / u.resolution.y;
++    float t = u.time;
++
++    // Horizon line (moonlight reflects on water below this)
++    float horizon = 0.55;
++
++    // ---- SKY (above horizon) ----
++    float3 color;
++    if (sUV.y > horizon) {
++        // Deep night sky — gradient from near-black at top to faint indigo at horizon
++        float skyT = (sUV.y - horizon) / (1.0 - horizon);
++        float3 nightTop = float3(0.005, 0.008, 0.022);
++        float3 nightHorizon = float3(0.025, 0.04, 0.08);
++        color = mix(nightHorizon, nightTop, skyT);
++
++        // Stars
++        float stars = starField(sUV, t);
++        color += float3(0.85, 0.90, 1.0) * stars;
++
++        // Moon disk
++        color += moonDisk(sUV);
++
++        // Subtle high-altitude haze drift
++        float haze = mw_fbm(sUV * 3.0 + float2(t * 0.02, 0.0), t, 3);
++        color += float3(0.04, 0.05, 0.08) * smoothstep(0.55, 0.75, haze) * (1.0 - skyT * 0.7);
++
++    } else {
++        // ---- OCEAN (below horizon) ----
++        // Compute height field
++        float swellH = oceanSwell(sUV, t, aspect);
++
++        float touchH = 0.0;
++        if (u.touchActive > 0.5) {
++            // Touch must be in screen UV (flipped)
++            float2 touchUV = float2(u.touch.x / u.resolution.x, 1.0 - u.touch.y / u.resolution.y);
++            // Only register touches on water
++            if (touchUV.y < horizon + 0.02) {
++                touchH = touchRipple(sUV, touchUV, t, aspect);
++            }
++        }
++        float totalH = swellH + touchH;
++
++        // Surface normal via central differences
++        float eps = 1.5 / max(u.resolution.x, u.resolution.y);
++        float hR = oceanSwell(sUV + float2(eps, 0.0), t, aspect);
++        float hU = oceanSwell(sUV + float2(0.0, eps), t, aspect);
++        if (u.touchActive > 0.5) {
++            float2 touchUV = float2(u.touch.x / u.resolution.x, 1.0 - u.touch.y / u.resolution.y);
++            if (touchUV.y < horizon + 0.02) {
++                hR += touchRipple(sUV + float2(eps, 0.0), touchUV, t, aspect);
++                hU += touchRipple(sUV + float2(0.0, eps), touchUV, t, aspect);
++            }
++        }
++        float3 normal = normalize(float3(totalH - hR, totalH - hU, 0.018));
++
++        // Distance from horizon — ocean gets darker as it recedes (perspective fake)
++        float depthT = saturate((horizon - sUV.y) / horizon);
++
++        // Deep-ocean base color: near-black indigo, slightly warmer near the camera
++        float3 deepNear = float3(0.022, 0.045, 0.085);
++        float3 deepFar  = float3(0.005, 0.010, 0.030);
++        float3 waterBase = mix(deepNear, deepFar, depthT);
++
++        // Subtle low-frequency texture in the deep water
++        float depthTex = mw_fbm(sUV * 2.0 + float2(t * 0.03, t * 0.02), t, 4);
++        waterBase *= 0.85 + depthTex * 0.3;
++
++        // Moonlight reflection on the water surface
++        float3 moonRefl = moonlightReflection(sUV, normal, t);
++        // Amplify reflection along the band; reduce away from it
++        moonRefl *= (0.6 + abs(normal.x) * 1.4);
++
++        // Specular spec from a high light (the moon)
++        float3 lightDir = normalize(float3(0.05, 0.95, 0.4));
++        float spec = pow(max(dot(normal, lightDir), 0.0), 60.0);
++        float3 specColor = float3(0.85, 0.92, 1.0) * spec * 0.65;
++
++        // Foam-like crests where the wave is high (very subtle, this is calm ocean)
++        float crest = smoothstep(0.55, 0.85, totalH);
++        float3 crestColor = float3(0.45, 0.55, 0.70) * crest * 0.35;
++
++        // Touch glow — soft circular brightening at the touch point
++        float3 touchGlow = float3(0.0);
++        if (u.touchActive > 0.5) {
++            float2 touchUV = float2(u.touch.x / u.resolution.x, 1.0 - u.touch.y / u.resolution.y);
++            if (touchUV.y < horizon + 0.02) {
++                float2 dt = sUV - touchUV;
++                dt.x *= aspect;
++                float r = length(dt);
++                float inner = exp(-r * r / 0.0035) * 1.1;
++                float outer = exp(-r * r / 0.025) * 0.35;
++                touchGlow = float3(0.55, 0.75, 1.0) * (inner + outer);
++            }
++        }
++
++        color = waterBase + moonRefl + specColor + crestColor + touchGlow;
++
++        // Soft horizon mist — slight brightening right at the line
++        float mist = smoothstep(0.04, 0.0, abs(sUV.y - horizon)) * 0.10;
++        color += float3(0.10, 0.13, 0.20) * mist;
++    }
++
++    // ---- Vignette ----
++    float2 vig = uv - 0.5;
++    float vignette = 1.0 - dot(vig, vig) * 0.95;
++    color *= max(vignette, 0.0);
++
++    // ---- Tone map (Reinhard) + gamma ----
++    color = color / (color + 1.0);
++    color = pow(saturate(color), float3(1.0 / 2.2));
++
++    // Apply variant tint (silvery moonlight is the default tint)
++    color *= u.tint;
++
++    output.write(float4(saturate(color), 1.0), gid);
++}

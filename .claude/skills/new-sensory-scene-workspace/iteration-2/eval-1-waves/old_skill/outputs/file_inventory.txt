@@ -1,0 +1,16 @@
+# Waves scene — file inventory (eval-1-waves / old_skill / iteration-2)
+# Format: STATUS<TAB>PATH<TAB>NOTES
+
+# ----- Created -----
+A	nagi/Scenes/Waves/WavesScene.swift	WavesScene + WavesTouchState + WavesVisual; tap = droplet, end = ripple train, longPress = deep swell
+
+# ----- Modified -----
+M	nagi/Models/TextureType.swift	displayNameKey for .waves: .forBetterSleeping → .categoryWaves; gradientColors → midnight ocean (deep navy → moonlit silver)
+M	nagi/Services/HapticEngine.swift	Added 3 static factories: makeWavesDropletTapPattern / makeWavesRippleTrainPattern / makeWavesDeepSwellPattern
+M	nagi/Services/LocalizationManager.swift	Added L10nKey.categoryWaves + en/ja/ko/zh-Hans translations (Waves / 波 / 파도 / 波浪)
+M	nagi/Shaders/WavesShader.metal	Rewrote daylight tropical look as midnight ocean: dark indigo base, cool moon specular, central moon column, sparse glitter, soft foam
+M	nagi/Views/Relax/RelaxView.swift	destinationView(for:) refactored from if/else to switch; added .waves → SceneStage(scene: WavesScene())
+M	nagi.xcodeproj/project.pbxproj	register_one.py: added BuildFile A1000104 + FileRef B1000104 + Group child + Sources phase entry for WavesScene.swift; healed silent orphan WavesShader.metal (added BuildFile A1000044 + Sources phase entry against the existing FileRef B1000044)
+
+# ----- Counts -----
+# 1 created, 6 modified, 0 deleted

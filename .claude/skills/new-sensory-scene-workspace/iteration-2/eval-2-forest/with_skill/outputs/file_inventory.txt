@@ -1,0 +1,19 @@
+=== Files created ===
+nagi/Scenes/Forest/ForestScene.swift
+nagi/Shaders/ForestShader.metal
+
+=== Files modified ===
+nagi/Models/TextureType.swift
+nagi/Services/HapticEngine.swift
+nagi/Services/LocalizationManager.swift
+nagi/Views/Relax/RelaxView.swift
+nagi.xcodeproj/project.pbxproj
+
+=== File sizes ===
+     109 nagi/Scenes/Forest/ForestScene.swift
+     372 nagi/Shaders/ForestShader.metal
+     316 nagi/Models/TextureType.swift
+     468 nagi/Services/HapticEngine.swift
+    1062 nagi/Services/LocalizationManager.swift
+     200 nagi/Views/Relax/RelaxView.swift
+    2527 total

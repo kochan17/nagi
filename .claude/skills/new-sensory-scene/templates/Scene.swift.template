@@ -1,0 +1,83 @@
+import SwiftUI
+import os.log
+
+// MARK: - Touch state (shared reference between onTouch and VisualBody)
+
+final class __SCENE__TouchState: ObservableObject {
+    @Published var touchLocation: CGPoint? = nil
+    @Published var previousTouchLocation: CGPoint? = nil
+    @Published var isTouching: Bool = false
+}
+
+// MARK: - Scene
+
+struct __SCENE__Scene: SensoryScene {
+    let id = "__scene__"
+    let title = "__SCENE__"
+
+    private let touchState = __SCENE__TouchState()
+    private let logger = Logger(subsystem: "app.nagi", category: "__SCENE__Scene")
+
+    @ViewBuilder
+    func makeVisual(context: SensoryContext) -> some View {
+        __SCENE__Visual(touchState: touchState)
+    }
+
+    func prepare(context: SensoryContext) async {
+        // TODO: Register scene-specific haptic patterns via context.haptics.register(name:pattern:).
+        // Pattern factories live in HapticEngine.swift. See BonfireScene.prepare for the model.
+
+        // TODO: Register the ambient audio asset if one exists in the bundle.
+        // guard let url = Bundle.main.url(forResource: "__scene___ambient", withExtension: "wav") else {
+        //     logger.warning("__scene___ambient not found in bundle — skipping audio registration")
+        //     return
+        // }
+        // context.audio.registerSoundAsset(identifier: "__scene___ambient", url: url)
+    }
+
+    func onTouch(_ event: TouchEvent, context: SensoryContext) {
+        switch event {
+        case .began(let position):
+            let eventID = context.clock.beginEvent(label: "__scene__.tap")
+            touchState.previousTouchLocation = nil
+            touchState.touchLocation = position
+            touchState.isTouching = true
+            // TODO: context.haptics.play(name: "<scene-specific>")
+            context.clock.completeEvent(id: eventID, actuator: "haptic")
+
+        case .moved(let from, let to, _):
+            touchState.previousTouchLocation = from
+            touchState.touchLocation = to
+            touchState.isTouching = true
+
+        case .ended(let position):
+            touchState.isTouching = false
+            touchState.touchLocation = position
+            // TODO: context.haptics.play(name: "<scene-specific-release>")
+
+        case .longPress(let position):
+            touchState.touchLocation = position
+            // TODO: context.haptics.play(name: "<scene-specific-hold>")
+        }
+    }
+
+    func teardown(context: SensoryContext) {
+        // Engine lifecycle is owned by SceneDirector; nothing to do here.
+    }
+}
+
+// MARK: - Visual body
+
+private struct __SCENE__Visual: View {
+    @ObservedObject var touchState: __SCENE__TouchState
+
+    var body: some View {
+        FluidMetalView(
+            touchLocation: $touchState.touchLocation,
+            previousTouchLocation: $touchState.previousTouchLocation,
+            isTouching: $touchState.isTouching,
+            textureType: .__scene__
+        )
+        .ignoresSafeArea()
+    }
+}

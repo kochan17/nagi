@@ -1,0 +1,39 @@
+{
+  "skill_name": "new-sensory-scene",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Waves シーンを追加したい。深い海の夜、月光が静かに揺れているような雰囲気。Bonfire と同じ品質レベルで、Relax タブから入ってタッチで反応する完全なシーンとして作って。",
+      "expected_output": "8 ステップ全部実行: WavesScene.swift + WavesShader.metal 作成、TextureType .waves 拡張、HapticEngine .waves プロファイル + factory 追加、Localizable に display name 追加、RelaxView 分岐、pbxproj 登録",
+      "files": [],
+      "expectations": [
+        "ファイル `nagi/Scenes/Waves/WavesScene.swift` が新規作成され、`struct WavesScene: SensoryScene` を含む",
+        "WavesScene が `id = \"waves\"` と `title = \"Waves\"` を持つ",
+        "ファイル `nagi/Shaders/WavesShader.metal` が新規作成され、`kernel void waves_render(...)` を含む（kernel 関数名一致）",
+        "shader が `FluidUniforms` 構造体を含み、touch 反応ロジックを持つ",
+        "`nagi/Models/TextureType.swift` の enum に `.waves` の対応がある（既存）か、6 メソッド全てに waves case が揃う",
+        "`nagi/Services/HapticEngine.swift` の `HapticProfile.profile(for:)` に `.waves` の case がある",
+        "HapticEngine に `make Waves...Pattern() throws -> CHHapticPattern` 形式の static factory が 1 個以上追加されている",
+        "`nagi/Views/Relax/RelaxView.swift` の `destinationView(for:)` から `.waves` 時に `SceneStage(scene: WavesScene())` に遷移する分岐がある",
+        "pbxproj に WavesScene.swift と WavesShader.metal が 4 サイト全部登録されている（PBXBuildFile + PBXFileReference + PBXGroup + Sources phase）",
+        "既存の BonfireScene 関連ファイルが破壊されていない（git diff で `Bonfire` を含む削除が無い）"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Forest シーンを作って。深い古い森、葉のざわめき、木漏れ日が差し込むような視覚と、踏みしめる落ち葉のような触覚。",
+      "expected_output": "Waves と同じ 8 ステップ、命名は Forest / forest",
+      "files": [],
+      "expectations": [
+        "ファイル `nagi/Scenes/Forest/ForestScene.swift` が新規作成され、`struct ForestScene: SensoryScene` を含む",
+        "ファイル `nagi/Shaders/ForestShader.metal` が新規作成され、`kernel void forest_render(...)` を含む",
+        "`nagi/Models/TextureType.swift` の enum に `.forest` case が追加され、kernelName / displayNameKey / iconName / soundFileName / gradientColors / materialTextureName 全部に分岐が追加されている",
+        "`nagi/Services/HapticEngine.swift` の `HapticProfile.profile(for:)` に `.forest` の case が追加されている",
+        "HapticEngine に Forest 用の static factory が 1 個以上追加されている",
+        "`nagi/Views/Relax/RelaxView.swift` で `.forest` → `SceneStage(scene: ForestScene())` の分岐が追加されている",
+        "pbxproj に ForestScene.swift と ForestShader.metal が 4 サイト全部登録されている",
+        "BonfireScene 関連が破壊されていない"
+      ]
+    }
+  ]
+}

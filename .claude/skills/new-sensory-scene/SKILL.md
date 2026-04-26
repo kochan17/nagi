@@ -24,7 +24,21 @@ skill 内では以下の表記で呼び分ける:
 - `__SCENE__` = PascalCase（例: `Waves`）
 - `__scene__` = lowercase（例: `waves`）
 
-## 手順（8 ステップ）
+## 手順（9 ステップ）
+
+### Step 0: 命名衝突チェック（**必ず最初に**）
+
+`nagi/Models/TextureType.swift` を grep して、提案された `__scene__` がすでに `enum TextureType` に存在しないか確認:
+
+```bash
+grep -n "case __scene__" nagi/Models/TextureType.swift
+```
+
+ヒットした場合（例: `Waves` を頼まれたが `.waves` がすでに存在）、ユーザーに必ず確認:
+
+> 「`.waves` はすでに variant カタログ用に予約済みです。新シーン用に差別化された名前（例: `MoonlitWaves` / `OceanWaves` / `DeepSea`）を使うか、既存の `.waves` を sensory シーン化するかどちらにしますか？」
+
+**確認なしに勝手にリネームしない**。ユーザーの命名意図を尊重する。`MoonlitWaves` のような複合名で進めることが決まったら、以降の `__SCENE__` / `__scene__` をそれに置換する。
 
 ### Step 1: 既存パターンを Read で確認
 
@@ -115,23 +129,26 @@ sed -i '' 's/__SCENE__/<SceneName>/g; s/__scene__/<scenename>/g' nagi/Shaders/__
 
 3. Step 2 で書いた `__SCENE__Scene.prepare()` から、これらの factory を呼んで `context.haptics.register(name:pattern:)` する。
 
-### Step 6: Localizable.xcstrings に displayName 追加
+### Step 6: LocalizationManager の dict + L10nKey に display name 追加
 
-`nagi/Resources/Localizable.xcstrings` は JSON。直接編集するなら以下のような形:
+**`Localizable.xcstrings` は実体が使われていない**。実際の翻訳ソースは `nagi/Services/LocalizationManager.swift` のハードコード辞書。xcstrings は触らない（壊すと Xcode が起動しなくなる）。
 
-```json
-"category_SCENE_": {
-  "extractionState": "manual",
-  "localizations": {
-    "en": { "stringUnit": { "state": "translated", "value": "__SCENE__" } },
-    "ja": { "stringUnit": { "state": "translated", "value": "<日本語訳>" } }
-  }
-}
-```
+`nagi/Services/LocalizationManager.swift` を編集:
 
-加えて、対応する `L10nKey` enum case を `nagi/Services/LocalizationManager.swift` で確認し、無ければ追加。
+1. `enum L10nKey: String` の `case categoryCampfire` 周辺に新 case を追加:
+   ```swift
+   case category__SCENE__
+   ```
 
-**この Step が一番 fragile。** xcstrings の JSON を壊すと Xcode が起動しなくなる。Edit ツールで該当箇所だけ慎重に。
+2. 4 言語の翻訳辞書（`enTranslations`、`jaTranslations`、`koTranslations`、`zhTranslations` など）すべてに `.categoryCampfire: "Campfire",` のすぐ近くに新エントリを追加:
+   ```swift
+   .category__SCENE__: "<英語>",   // enTranslations
+   .category__SCENE__: "<日本語>", // jaTranslations
+   .category__SCENE__: "<한국어>", // koTranslations
+   .category__SCENE__: "<中文>",   // zhTranslations
+   ```
+
+3. Step 4 の `displayNameKey` で参照する key 名（`.category__SCENE__`）と一致していることを確認。
 
 ### Step 7: RelaxView の navigation を分岐
 
@@ -207,10 +224,17 @@ pbxproj 登録: 2 ファイル ([BuildFile/FileRef ID])
 | Relax カードに出ない | `TextureType` への case 追加忘れ | Step 4 を見直し |
 | カード tap しても古い CategoryDetailView | RelaxView 分岐忘れ | Step 7 を見直し |
 | Metal pipeline lookup failed | kernel 名と `kernelName` 不一致 | Step 3 と Step 4 の `__scene___render` を比較 |
-| Xcode が起動しない / プロジェクトが壊れた | xcstrings JSON 破損 | `git checkout HEAD -- nagi/Resources/Localizable.xcstrings` で revert、Step 6 をやり直す |
+| Display name が出ない / 「未翻訳」が出る | LocalizationManager.swift の dict 4 言語のいずれかに追加忘れ | Step 6 を見直し、4 言語全部に追加されているか確認 |
+| `.category__SCENE__` が type-check を通らない | L10nKey enum への case 追加忘れ | Step 6 の (1) を見直し |
 
 ## 同梱ファイル
 
 - `templates/Scene.swift.template` — Step 2 で使用
 - `templates/Shader.metal.template` — Step 3 で使用
-- `references/scene-anatomy.md`（任意）— 各シーンが共有する 90% / 個別の 10% の境界線解説
+
+## バージョン履歴
+
+- **v2** (現行):
+  - Step 0 追加（命名衝突チェック）
+  - Step 6 を `Localizable.xcstrings` 編集 → `LocalizationManager.swift` の dict + L10nKey 編集に修正（xcstrings は実装で使われていない）
+- v1: 8 ステップ初版。命名衝突対応無し、Step 6 が xcstrings 誤指示
